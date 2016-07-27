@@ -1,11 +1,10 @@
-/*
- *Verify that the expression getchar() != EOF is 0 or 1
- * */
 #include <stdio.h>
 
-int main()
-{
-    printf("%i\n", (getchar() != EOF) );
+/* verify that the expression getchar() != EOF */
 
-    return 0; 
+int main(void)
+{
+    printf("%d\n", (getchar() != EOF));
+
+    return 0;
 }

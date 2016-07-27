@@ -1,9 +1,10 @@
-/* 
- * Write a program to print the value of EOF 
- */
 #include <stdio.h>
 
-int main()
+/* program that prints the value of EOF */
+
+int main(void)
 {
-    printf("%i\n", EOF); 
+    printf("%i\n", EOF);
+
+    return 0;
 }
