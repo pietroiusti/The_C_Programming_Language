@@ -12,9 +12,9 @@ int main(void)
                 ;
             }
             putchar(c2);
-        } else {
+        } 
+        if ( c != ' ') 
             putchar(c);
-        }
     }
     
     return 0;
