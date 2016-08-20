@@ -11,16 +11,11 @@
 
 int main(void)
 {
-    int c, i, nexttabstop;
+    int c, c2, i, nexttabstop;
     char result[MAXSTRING];
 
-
-    int c2, i2; 
-
     for (i = 0; (c = getchar()) != EOF; i++) {
-        
         nexttabstop = i + TABSTOPS - (i % TABSTOPS);
-
         if (c != ' ') //if c is not a blank write it into result[]
             result[i] = c;
         else {
@@ -28,18 +23,13 @@ int main(void)
             //blank counting stops when is encountered either a char which is not blank
             //or a tabstop.
             int blanks;
-            i2 = i; //use i2 so don't mess up with i which I use as index for writing into result[]; 
+            int i2 = i; //use i2 so don't mess up with i which I use as index for writing into result[]; 
             for (blanks = 1; (c2 = getchar()) == ' ' && i2 != nexttabstop; ++blanks, ++i2)
                 ;
-           
-            printf("%i\n", blanks);
-
             if (c2 == ' ') { //if we have encountered a tab stop, there could be other blanks 
                 while ( (c2 = getchar()) == ' ') //exhaust all remained blanks 
                     ;
-                //result[i] = c2;
             }
-           
             if (blanks < 4){ //if blanks are less than one tab
                 for (int j = 0; j < blanks; ++j, ++i) //write the right amount of blanks into result[]
                     result[i] = ' ';
@@ -53,15 +43,11 @@ int main(void)
             else {
                 //calculate remainder
                 int remainder = blanks % 4;
-                printf("%i\n", remainder);
                 //calculate nunber of tabs
                 int tabs = (blanks - remainder) / 4;
-                printf("%i\n", tabs);
-
                 //put tabs
                 for (int j = 0; j < tabs; ++j, ++i)
                     result[i] = '\t';
-
                 //put remaining blanks
                 if (remainder > 0)
                     for (int j = 0; j < remainder; ++j, ++i)
@@ -78,18 +64,3 @@ int main(void)
 
     return 0;
 }
-
-/*
-
-n = 4
-hello\tworld becomes:
-hello   world
-^   ^   ^   ^ 
-123456789
-
-n = 3
-hello\tworld becomes:
-hello world
-^  ^  ^  ^  
-123456789
-*/
