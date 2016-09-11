@@ -7,7 +7,7 @@
  * C comments do not nest.
  */
 
-//TODO: handle quoted strings and character constants properly.
+/* Single line comments are not contemplated */ 
 
 int main(void)
 {
@@ -22,7 +22,17 @@ int main(void)
     i = 0;
     while ((c = getchar()) != EOF) {
         if (status == 0) { //if we are not within a comment 
-            if (c == '/') { //check if we are going into a comment
+            if (c == '"') { // char strings case
+                result[i] = c;
+                ++i;
+                while ( (c = getchar()) != '"' ){
+                    result[i] = c;
+                    ++i;
+                }
+                result[i] = c;
+                ++i;
+            }
+            else if (c == '/') { //check if we are going into a comment
                 if((c2 = getchar()) == '*'){
                     status = 1;
                 }
