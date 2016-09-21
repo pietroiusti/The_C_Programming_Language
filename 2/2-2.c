@@ -64,21 +64,20 @@ int getLine(char s[], int lim)
             }
         }
     }
-if (c == '\n') {
-    s[i] = c;
-    ++i;
-}
-s[i] = '\0';
-return i;
+    if (c == '\n') {
+        s[i] = c;
+        ++i;
+    }
+    s[i] = '\0';
+    return i;
 }
 
 /* copy: copy 'from' into 'to'; assume to is big enough */
 void copy(char to[], char from[])
 {
-int i;
+    int i;
 
-i = 0;
-while ((to[i] = from[i]) != '\0')
-    ++i;
+    i = 0;
+    while ((to[i] = from[i]) != '\0')
+        ++i;
 }
-
