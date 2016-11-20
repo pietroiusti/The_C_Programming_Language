@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-/* print Celsius-Fahrenheit table
- * for Celsius = 0, 20, ..., 300
+/* Write a program to print the corresponding Celsius to Fahrenheit
+ * table.
  */
 
 int main(void)
