@@ -1,6 +1,9 @@
 #include <stdio.h>
 
-/*copy input to output and replace eache string of one or more blanks by a single blank*/
+/* Write a program to copy its input to its output, 
+ * replacing each string of one or more blanks by a
+ * single blank
+ */
 int main(void)
 {
     int c, c2;
