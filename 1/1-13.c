@@ -4,9 +4,14 @@
 #define OUT   0    /* outside a word */
 
 /* write a program to print a histogram of
- * the lengths of words in its input. 
- * Horizontal histogram version.
+ * the lengths of words in its input. It 
+ * easy to draw a the histogram with the bars
+ * horizontal; a vertical orientation is more
+ * challenging.
  */
+
+
+/* Horizontal histogram version. */
 
 int main(void)
 {
