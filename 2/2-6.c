@@ -26,5 +26,5 @@ unsigned getbits(unsigned x, int p, int n)
  */
 unsigned setbits(unsigned x, int p, int n, unsigned y)
 {
-    return (x & ( ~ (getbits(~0, n-1, n) << 3 ))) | (getbits(y, n-1, n) << (p+1-n));
+    return (x & ( ~ (getbits(~0, n-1, n) << (p+1-n)))) | (getbits(y, n-1, n) << (p+1-n));
 }
