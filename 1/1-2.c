@@ -7,7 +7,7 @@
 
 int main()
 {
-	printf("Alert (bell) character, \\a:\a");
+    printf("Alert (bell) character, \\a:\a");
     printf("\n");
 
     printf("Backspace, \\b:\b");
@@ -25,7 +25,7 @@ int main()
     printf("Horizontal tab, \\t:\t");
     printf("\n");
 
-    printf("Verical tab, \\v:\v");
+    printf("Vertical tab, \\v:\v");
     printf("\n");
 
     printf("Backslash, \\\\: \\");
