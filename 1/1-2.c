@@ -5,7 +5,7 @@
  * above
  */
 
-int main()
+main()
 {
     printf("Alert (bell) character, \\a:\a");
     printf("\n");

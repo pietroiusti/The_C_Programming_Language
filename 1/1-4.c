@@ -4,7 +4,7 @@
  * table.
  */
 
-int main(void)
+main()
 {
     float fahr, celsius;
     int lower, upper, step;
