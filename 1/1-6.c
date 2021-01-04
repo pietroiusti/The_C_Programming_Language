@@ -4,10 +4,7 @@
  * is 0 or 1
  */
 
-int main(void)
+main()
 {
-    /* if the char given is EOF the ouput will be 0, otherwise 1 */
-    printf("%d\n", (getchar() != EOF));
-
-    return 0;
+    printf("%d\n", getchar() != EOF);
 }
