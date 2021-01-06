@@ -1,15 +1,25 @@
 #include <stdio.h>
 
 /* Write a program that prints its input one word per line */
-int main(void)
+
+#define IN  1
+#define OUT 0
+
+main()
 {
-    int c;
+    int c, state;
 
-    while ( (c = getchar()) != EOF ) {
-        putchar(c);
-        if ( c == ' ' )
-            putchar('\n');
+    state = OUT;
+    while ((c = getchar()) != EOF) {
+	if (c == ' ' || c == '\n' || c == '\t') {
+	    if (state != OUT) {
+		state = OUT;
+		putchar('\n');
+	    }
+	}
+	else if (c != ' ' && c != '\n' && c != '\t') {
+	    state = IN;
+	    putchar(c);
+	}
     }
-
-    return 0;
 }
