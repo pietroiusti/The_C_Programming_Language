@@ -3,28 +3,28 @@
 /* write a program to print a histogram of the frequencies of
    different characters in its input */
 
-int main(void)
+main()
 {
-    int c, i, j;
-    int chars['z'-'a'];
-    int freq[26];
+    int c, i, j, state;
 
-    for (i = 0; i < 26; i++) {
-        freq[i] = 0;
+    int char_lengths[300];
+    for (i = 0; i < 300; ++i) {
+	char_lengths[i] = 0;
     }
 
-    while ( (c = getchar()) != EOF ) {
-        if (c >= 'a' && c <= 'z')
-            ++freq[c-'a'];
+    while ((c = getchar()) != EOF) {
+	++char_lengths[c];
     }
+
+    printf("\n");
     
-    /*print histogram*/
-    for (i = 0; i <= 26; i++) {
-        printf("%c: ", 'a' + i);
-        for (j = 0; j < freq[i]; j++)
-            putchar('#');
-        putchar('\n');
+    for (i = 0; i < 300; ++i) {
+	if (char_lengths[i] != 0) {
+	    printf("%c: ", i);
+	    for (j = 0 ; j < char_lengths[i]; ++j) {
+		printf("#");
+	    }
+	    printf("\n");
+	}
     }
-
-    return 0;
 }
