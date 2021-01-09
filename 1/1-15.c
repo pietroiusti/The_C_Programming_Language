@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-/* Rewrite the temperature conversion program of  
- * Section 1.2 to use a function for conversion.
+/* Rewrite the temperature conversion program of Section 1.2 to use a
+ * function for conversion.
  */
 
-float fahrToCelsius(float fahr);
+float fahr_to_celsius(float fahr);
 
-int main(void)
+main()
 {
     float fahr, celsius;
     int lower, upper, step;
@@ -15,20 +15,17 @@ int main(void)
     upper = 300; // upper limit
     step = 20; /* step size */
 
-    /*heading*/
-    printf("----\t\t-------\n");
-    printf("Fahr\t\tCelsius\n");
-    printf("----\t\t-------\n");
-
     fahr = lower;
     while (fahr <= upper) {
-        celsius = fahrToCelsius(fahr);
-        printf("%3.0f\t\t%6.1f\n", fahr, celsius);
+        celsius = fahr_to_celsius(fahr);
+        printf("%3.0f %6.1f\n", fahr, celsius);
         fahr = fahr + step;
     }
+
+    return 0;
 }
 
-float fahrToCelsius(float fahr)
+float fahr_to_celsius(float fahr)
 {
-    return (5.0/9.0) * (fahr-32.0); 
+    return (5.0/9.0) * (fahr-32.0);
 }
