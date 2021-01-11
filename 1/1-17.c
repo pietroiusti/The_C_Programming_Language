@@ -1,38 +1,56 @@
 #include <stdio.h>
-#define MAXLINE 1000    /* maximum input line size */
 
-/* write a program to print all iput lines that are longer
- * 80 characters
+#define MAXLINE 1000
+#define MAXTEXT 10000
+
+/* write a program to print all iput lines that are longer 80
+ * characters
  */
 
-int getLine(char line[], int maxline);
+void copy_input(char to[]);
+void print_lines(char text[], int limit);
 
-int main(void)
+main()
 {
-    int len;                /* current line lenght */
-    int max;                /* maximum length seen so far */
-    char line[MAXLINE];      /* current input line */
-    char longest[MAXLINE];   /* longest line saved here */
+    char text[MAXTEXT];
 
-    max = 0; 
-    while ((len = getLine(line, MAXLINE)) > 0) {
-        if (len > 80)
-            printf("%s", line);
-    }
-    return 0;
+    copy_input(text);
+
+    printf("Lines longer than 80 chars:\n");
+    print_lines(text, 80);
 }
 
-/* getLine: read a line into s, return length */
-int getLine(char s[], int lim)
+/* copy input into `to` */
+void copy_input(char to[])
 {
     int c, i;
-
-    for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
-        s[i] = c;
-    if (c == '\n') {
-        s[i] = c;
-        ++i;
+    
+    for (i = 0; (c = getchar()) != EOF && i < MAXTEXT; ++i) {
+	to[i] = c;
     }
-    s[i] = '\0';
-    return i; 
+    to[i] = '\0';
+}
+
+/* print lines from `text` whose length > `limit` */
+void print_lines(char text[], int limit)
+{
+    int i;
+    char line[MAXLINE];
+    int j; /* index for line */
+
+    j = 0;
+    for (i = 0; text[i] != '\0'; ++i) {
+	line[j] = text[i];
+	++j;
+	if (text[i] == '\n') {
+	    if (j-1 > limit ) {
+		line[j] = '\0';
+		printf(line);
+	    }
+	    j = 0;
+	}
+    }
+    line[j] = '\0';
+    if (j-1 > limit)
+	printf(line);
 }
