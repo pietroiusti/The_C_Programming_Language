@@ -24,15 +24,12 @@ void clean_and_copy_input(char to[])
     int previous = '\n';
     
     for (i = 0; (c = getchar()) != EOF && i < MAXTEXT; ++i) {
-	if (c == '\t' && previous == '\t') {
+	if (c == '\t' && previous == '\t')
 	    --i;
-	}
-	else if (c == ' ' && previous == ' ') {
+	else if (c == ' ' && previous == ' ')
 	    --i;
-	}
-	else if (c == '\n' && previous == '\n') {
+	else if (c == '\n' && previous == '\n')
 	    --i;
-	}
 	else {
 	    to[i] = c;
 	    previous = c;
