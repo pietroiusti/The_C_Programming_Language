@@ -1,6 +1,4 @@
 #include <stdio.h>
-
-#define MAXLINE 1000
 #define MAXTEXT 10000
 
 /* Write a program to remove trailing blanks and tabs from each line
@@ -15,9 +13,7 @@ main()
     int c, i;
 
     clean_and_copy_input(text);
-
     printf(text);
-
 }
 
 /* Remove trailing blanks and tabs and blank lines from input and copy
