@@ -13,14 +13,14 @@ main()
     while ((len = get_line(line, MAXLINE)) > 0) {
 	if (len != MAXLINE-1) {
 	    if (overflow > 0)
-		len = len + (MAXLINE-1 * overflow);
+		len = len + ((MAXLINE-1) * overflow);
 	    overflow = 0;
 	    printf("%s", line);
 	    printf("Length: %i\n", len);
 	} else {
 	    if (line[MAXLINE-2] == '\n') {
 		if (overflow > 0)
-		    len = len + (MAXLINE-1 * overflow);
+		    len = len + ((MAXLINE-1) * overflow);
 		overflow = 0;
 		printf("%s", line);
 		printf("Length: %i\n", len);
