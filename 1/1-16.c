@@ -7,31 +7,44 @@ void copy(char to[], char from[]);
 main()
 {
     int len;
-    int overflow = 0;
+    int max;
+    int c, i;
     char line[MAXLINE];
+    char longest[MAXLINE];
 
-    while ((len = get_line(line, MAXLINE)) > 0) {
-	if (len != MAXLINE-1) {
-	    if (overflow > 0)
-		len = len + ((MAXLINE-1) * overflow);
-	    overflow = 0;
-	    printf("%s", line);
-	    printf("Length: %i\n", len);
+    max = 0;
+    while ((len = get_line(line, MAXLINE)) > 0)
+	if (len < MAXLINE-1) { /* len is less than the max length */
+	    if (len > max) {
+		max = len;
+		copy(longest, line);
+	    }
 	} else {
 	    if (line[MAXLINE-2] == '\n') {
-		if (overflow > 0)
-		    len = len + ((MAXLINE-1) * overflow);
-		overflow = 0;
-		printf("%s", line);
-		printf("Length: %i\n", len);
+		if (len > max) {
+		    max = len;
+		    copy(longest, line);
+		}
 	    } else {
-		++overflow;
-		printf("%s", line);
+		for (i = 0; c != '\n'; ++i)
+		    c = getchar();
+		len = len + i;
+		if (len > max) {
+		    max = len;
+		    copy(longest, line);
+		}
 	    }
 	}
+
+    if (max > 0) {
+	printf("%s", longest);
+	if (max > MAXLINE-1)
+	    printf("\n%i\n", max);
+	else
+	    printf("%i\n", max);
     }
 }
-    
+
 int get_line(char s[], int lim)
 {
     int c, i;
