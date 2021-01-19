@@ -26,8 +26,9 @@ main()
 		    copy(longest, line);
 		}
 	    } else {
-		for (i = 0; c != '\n'; ++i)
-		    c = getchar();
+		i = 0;
+		while ((c = getchar()) != '\n' && c != EOF)
+		    ++i;
 		len = len + i;
 		if (len > max) {
 		    max = len;
