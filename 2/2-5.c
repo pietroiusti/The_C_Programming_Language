@@ -8,28 +8,31 @@
  * strpbrk does the same job but returns a pointer to the location.)
  */
 
-int any(char s[], char s2[]);
+int any(char s1[], char s2[]);
 
-int main(void)
+main()
 {
-    char string1[100] = "Hello world";
-    char string2[100] = "Perenne";
-
-    printf("%i\n", any(string1, string2));
-
-    return 0;    
+    char s1[100] = "Hello world";
+    char s2[100] = "-thr";
+    printf("%i\n", any(s1, s2));
 }
 
-int any(char s[], char s2[])
+int any(char s1[], char s2[])
 {
-    int i, j, k;
+    // return 0 if c is in s, otherwise 1
+    int is_in(int c, char s[])
+    {
+	int i;
+        for (i = 0; s[i] != '\0'; i++)
+	    if (s[i] == c)
+		return 1;
+	return 0;
+    }
 
-    for (i = j = 0; s[i] != '\0'; i++) {
-        /* iterate over s2 till we find the char or we get to the end of s2 */
-        for (k = 0; s2[k] != s[i] && s2[k] != '\0'; k++)
-            ;
-        if (s2[k] != '\0') /* if is true that means we haven't found the char in s2 */ 
-            return i;
+    int i, j;
+    for (i = 0; s1[i] != '\0'; i++) {
+	if (is_in(s1[i], s2))
+	    return i;
     }
     return -1;
 }
