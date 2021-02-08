@@ -17,15 +17,7 @@ unsigned setbits(unsigned x, int p, int n, unsigned y)
     unsigned result;
     int shift = p-n+1;
     
-    unsigned bits = y & (1<<n)-1; /* get the n rightmost bits of y */
+    unsigned nmask = (1 << n) -1;
 
-    bits <<= shift; /* shift bits the right amount */
-
-    // turn bits on
-    result = x | bits;
-
-    //turn bits off
-    result = result & ~((~y & ((1<<n)-1) ) << shift);
-            
-    return result;
+    return (x & ~(nmask << shift)) | ((y & nmask) << shift);
 }
