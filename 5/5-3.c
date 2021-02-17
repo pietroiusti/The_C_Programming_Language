@@ -17,10 +17,11 @@ int main(void)
     return 0;
 }
 
+/* strcat2: concatenate t to end of s; s must be big enough */
 void strcat2(char *s, char *t)
 {
     while (*s) /* find end of s */
-	*s++;
+	s++;
     while (*s++ = *t++) /* copy t */
 	;
 }
