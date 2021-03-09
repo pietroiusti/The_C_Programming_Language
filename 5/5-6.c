@@ -29,7 +29,7 @@ int atoi2(char *s) {
     return n;
 }
 
-/* itoa, p. 63 */
+/* itoa, p. 64 */
 void itoa2(int n, char *s) {
     int i, sign;
 
@@ -43,4 +43,29 @@ void itoa2(int n, char *s) {
 	*(s+(i++)) = '-';
     *(s+i) = '\0';
     reverse(s);
+}
+
+/* reverse, p. 62 */
+void reverse2(char *s) {
+    int c, i, j;
+
+    for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
+	c = *(s+i);
+	*(s+i) = *(s+j);
+	*(s+j) = c;
+    }
+}
+
+/* strindex, p. 69  */
+int strindex2(char *s, char *t) {
+    int i, j, k;
+
+    for (i = 0; *(s+i) != '\0'; i++) {
+	for (j=i, k=0; *(t+k)!='\0' && *(s+j)==*(t+k); j++, k++)
+	    ;
+	if (k > 0 && *(t+k) == '\0')
+	    return i;
+    }
+
+    return -1;
 }
