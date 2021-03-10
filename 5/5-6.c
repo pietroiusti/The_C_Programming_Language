@@ -69,3 +69,25 @@ int strindex2(char *s, char *t) {
 
     return -1;
 }
+
+/*getop, p. 78*/
+int getop2(char *s) {
+    int i, c;
+
+    while ((*s = c = getch()) == ' ' || c == '\t')
+	;
+    *(s+1) = '\0';
+    if (!isdigit(c) && c != '.')
+	return c;
+    i = 0;
+    if (isdigit(c))
+	while (isdigit(*(s+(++i)) = c = getch()))
+	    ;
+    if (c == '.')
+	while (isdigit(*(s+(++i)) = c = getch()))
+	    ;
+    *(s+i) = '\0';
+    if (c != EOF)
+	ungetch(c);
+    return NUMBER;
+}
