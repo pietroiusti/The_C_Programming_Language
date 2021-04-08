@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <ctype.h>
-#include <string.h>
 
 /*
   Write a program that converts upper case to lower or lower case to
@@ -15,10 +14,10 @@ int main(int argc, char *argv[])
     int c;
     char *name = getname(argv[0]);
 
-    if (strcmp("uppertolower", name) == 0)
+    if (my_strcmp("uppertolower", name) == 0)
 	while ((c = getchar()) != EOF)
 	    putchar(tolower(c));
-    else if (strcmp("lowertoupper", name) == 0)
+    else if (my_strcmp("lowertoupper", name) == 0)
 	while ((c = getchar()) != EOF)
 	    putchar(toupper(c));
     else
