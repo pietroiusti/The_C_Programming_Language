@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/* p. 179. Design and write _flushbuf, fflush, and fclose */
+
 // #define NULL     0
 #define EOF      (-1)
 #define BUFSIZ  1024
@@ -47,6 +49,7 @@ FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
 
 int _fillbuf(FILE *);
 int _flushbuf(int , FILE *);
+int fflush(FILE *);
 
 #define feof(p)    (((p)->flag & _EOF) != 0)
 #define ferror(p)  (((p)->flag & _ERR) != 0)
@@ -54,7 +57,7 @@ int _flushbuf(int , FILE *);
 
 #define getc(p)    (--(p)->cnt >= 0					\
 		    ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
-#define putc(x, p) (--(p)->cnt >= 0		\
+#define putc(x, p) (--(p)->cnt >= 0				\
 		    ? *(p)->ptr++ = (x) : _flushbuf((x),p))
 
 #define getchar()  getc(stdin)
@@ -78,10 +81,13 @@ int main(void)
 
     fp2 = fopen("./hello-world.txt", "w");
 
-    char *s = "hello world";
+    char *s = "hello world!";
     for (int i = 0; s[i] != '\0'; i++) {
 	putc(s[i], fp2);
     }
+
+    //fflush(fp2);
+    fflush(NULL);
 
     return 0;
 }
@@ -157,12 +163,16 @@ int _fillbuf(FILE *fp)
     return (unsigned char) *fp->ptr++;
 }
 
+/* _flushbuf: flush buffer or allocate one if not allocated yet */
 int _flushbuf(int x, FILE *fp)
 {
+    // _flushbuf is called only when no charater has been written into
+    // the output file yet, or when we need to flush because the base
+    // buffer is full. In both cases, fp->cnt is supposed to be -1.
     int bufsize;
     if (fp->flag.write==0||fp->flag.err==1)
 	return EOF;
-    bufsize = (fp->flag.unbuf) ? 1 : 2;
+    bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
 
     if (fp->base == NULL)
 	if ((fp->base = (char *) malloc(bufsize)) == NULL)
@@ -183,3 +193,23 @@ int _flushbuf(int x, FILE *fp)
     return (unsigned char) (*fp->ptr++ = x);
 }
 
+/* Write any buffered data for fp. Return EOF for a write error, 0
+ * otherwise. fflush(NULL) flushes all output streams. */
+int fflush(FILE *fp)
+{
+    int flush(FILE *fp) {
+	int towrite = BUFSIZ - fp->cnt;
+	if (write(fp->fd, fp->base, towrite) != towrite)
+	    return EOF;
+    }
+
+    if (fp == NULL) {
+	for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
+	    if (fp->flag.write==1&&fp->flag.err==0)
+		if (flush(fp)==EOF)
+		    return EOF;
+    } else
+	return flush(fp);
+
+    return 0;
+}
