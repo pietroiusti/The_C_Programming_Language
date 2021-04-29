@@ -50,6 +50,7 @@ FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
 int _fillbuf(FILE *);
 int _flushbuf(int , FILE *);
 int fflush(FILE *);
+int fclose(FILE *fp);
 
 #define feof(p)    (((p)->flag & _EOF) != 0)
 #define ferror(p)  (((p)->flag & _ERR) != 0)
@@ -87,7 +88,9 @@ int main(void)
     }
 
     //fflush(fp2);
-    fflush(NULL);
+    //fflush(NULL);
+
+    fclose(fp2);
 
     return 0;
 }
@@ -198,12 +201,14 @@ int _flushbuf(int x, FILE *fp)
 int fflush(FILE *fp)
 {
     int flush(FILE *fp) {
-	int towrite = BUFSIZ - fp->cnt;
-	if (write(fp->fd, fp->base, towrite) != towrite)
+	int bytestowrite = BUFSIZ - fp->cnt;
+	if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
 	    return EOF;
     }
 
     if (fp == NULL) {
+	// Loop over FILE structs in _iob, skipping stdin, stdout and
+	// stderr
 	for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
 	    if (fp->flag.write==1&&fp->flag.err==0)
 		if (flush(fp)==EOF)
@@ -212,4 +217,20 @@ int fflush(FILE *fp)
 	return flush(fp);
 
     return 0;
+}
+
+/* fclose: flush unwritten data, discard unread buffered input, free
+ * any automatically allocated buffer, and close the stream. Return
+ * EOF if error, zero otherwise. */
+int fclose(FILE *fp)
+{
+    if (fp->flag.write==1)
+	if (fflush(fp) == EOF) {
+	    fp->flag.err = 1;
+	    return EOF;
+	}
+
+    free(fp->base);
+
+    return close(fp->fd) == -1 ? EOF : 0;
 }
