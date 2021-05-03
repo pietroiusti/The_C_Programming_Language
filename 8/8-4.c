@@ -89,82 +89,21 @@ int main(void)
     /* while ((c = getc(fp1)) != EOF) */
     /* 	write(1, &c, 1); */
 
-    fp2 = fopen("./hello-world.txt", "r");
+    fp2 = fopen("./hello-world.txt", "w");
 
-    for (int i = 0; i < 5; i++) {
-	int c = getc(fp2);
-	write(1, &c, 1);
+    char *s = "hello world!";
+    for (int i = 0; s[i] != '\0'; i++) {
+	putc(s[i], fp2);
     }
-    write(1, "\n", 1);
 
+    //gp_fseek(fp2, 0L, 0);
+    
+    fflush(fp2);
 
-    gp_fseek(fp2, (long) 6, 0);
+    putc('!', fp2);
 
-    /* lseek(fp2->fd, 0L, 0); */
-    /* fp2->ptr = fp2->base; */
-    /* read(fp2->fd, fp2->ptr, BUFSIZ); */
-    /* fp2->cnt = BUFSIZ; */
+    fflush(fp2);
 
-    write(1, "\n", 1);
-
-    int c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    c = getc(fp2);
-    write(1, &c, 1);
-
-    int a = EOF;
-    write(1, &a, 1);
-
-
-
-
-
-    /* fp2 = fopen("./hello-world.txt", "w"); */
-
-    /* char *s = "hello world!"; */
-    /* for (int i = 0; s[i] != '\0'; i++) { */
-    /* 	putc(s[i], fp2); */
-    /* } */
-
-
-    //fflush(fp2);
     //fflush(NULL);
 
     //fclose(fp1);
@@ -284,6 +223,8 @@ int fflush(FILE *fp)
 	int bytestowrite = BUFSIZ - fp->cnt;
 	if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
 	    return EOF;
+	fp->cnt = 0;
+	fp->ptr = fp->base;
     }
 
     if (fp == NULL) {
@@ -315,48 +256,20 @@ int fclose(FILE *fp)
     return close(fp->fd) == -1 ? EOF : 0;
 }
 
-
-  /* char buf[BUFSIZE]; */
-
-  /* int current_position = 1023; */
-  
-  /* int current_chunk;  */
-  
-  /* int next_position = 1028; */
-  
-  /* printf("%i\n", current_chunk = BUFSIZE * (current_position / BUFSIZE)); */
-  
-  /* printf("%s\n", current_chunk + BUFSIZE >= next_position ? "present" : "we need to make a system call"); */
-
-
-  
-  // fseek 1030
-  
-  // has the char in the new position already in the base buffer?
-  // if yes
-    // point the ptr to it
-    // call lseek  
-  // if not
-    // call lseek
-    // buffer BUFSIZ chars
-    // point the pointer to the beginning of the base buf
-
 int gp_fseek(FILE *fp, long offset, int origin) {
-    // check everything is alright...
+    if (fp->flag.err==1 || (fp->flag.read==0 && fp->flag.write==0))
+	return -1;
 
+    int bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
     lseek(fp->fd, offset, origin);
 
     if (fp->flag.read == 1) {
-	// TODO: don't loose buffered chars!
-
-	//int chars_to_save = fp->base+BUFSIZ - fp->ptr; //??
-
-	int bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
 	fp->ptr = fp->base;
 	read(fp->fd, fp->ptr, bufsize);
 	fp->cnt = bufsize;
     } else if (fp->flag.write == 1) {
-	;
+	fp->cnt = BUFSIZ;    
+	fp->ptr = fp->base;
     }
 
     return 0;
