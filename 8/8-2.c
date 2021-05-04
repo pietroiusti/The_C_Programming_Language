@@ -2,6 +2,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/* Rewrite fopen and _fillbuf with fields instead of explicit bit
+ operations. Compare code size and execution speed */
+
 // #define NULL     0
 #define EOF      (-1)
 #define BUFSIZ  1024
@@ -23,19 +26,8 @@ typedef struct _iobuf {
     int fd;     /* file descriptor */
 } FILE;
 
-/* enum _flags { */
-/*     _READ    = 01,    /\* file open for reading *\/ */
-/*     _WRITE   = 02,    /\* file open for writing *\/ */
-/*     _UNBUF   = 04,    /\* file is ubuffered *\/ */
-/*     _EOF     = 010,   /\* EOF has occurred on this file *\/ */
-/*     _ERR     = 020    /\* error occurred on this file *\/ */
-/* }; */
-
 //extern FILE _iob[OPEN_MAX];
 FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
-    /* { 0, (char *) 0, (char *) 0, _READ, 0 }, */
-    /* { 0, (char *) 0, (char *) 0, _WRITE, 1 }, */
-    /* { 0, (char *) 0, (char *) 0, _WRITE | _UNBUF, 2 } */
     { 0, (char *) 0, (char *) 0, {1,0,0,0,0}, 0 },
     { 0, (char *) 0, (char *) 0, {0,1,0,0,0}, 1 },
     { 0, (char *) 0, (char *) 0, {0,1,1,0,0}, 2 }
@@ -48,8 +40,8 @@ FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
 int _fillbuf(FILE *);
 int _fllushbuf(int , FILE *);
 
-#define feof(p)    (((p)->flag & _EOF) != 0)
-#define ferror(p)  (((p)->flag & _ERR) != 0)
+#define feof(p)    (((p)->flag.eof == 1))
+#define ferror(p)  (((p)->flag.err == 1))
 #define fileno(p)  ((p)->fd)
 
 #define getc(p)    (--(p)->cnt >= 0					\
@@ -106,16 +98,11 @@ FILE *fopen(char *name, char *mode)
     if (*mode != 'r' && *mode != 'w' && *mode != 'a')
 	return NULL;
     for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
-	/* if ((fp->flag & (_READ | _WRITE)) == 0) */
 	if (fp->flag.read == 0 && fp->flag.write == 0)
 	    break; /* found free slot */
-    /* atm only the first FILEs in the _iob array have been
-     * initialized. Isn't it problem that fp points to garbage? */
 
     if (fp >= _iob + OPEN_MAX) /* no free slots */
 	return NULL;
-    /* Why do we need to test for greater than? Wouldn't fp == _iob +
-     * OPEN_MAX suffice? How could fp point beyond _iob+OPEN_MAX? */
     
     if (*mode == 'w')
 	fd = creat(name, PERMS);
@@ -134,7 +121,7 @@ FILE *fopen(char *name, char *mode)
     fp->fd = fd;
     fp->cnt = 0;
     fp->base = NULL;
-    //fp->flag = (*mode == 'r') ? _READ : _WRITE;
+
     if (*mode == 'r') fp->flag.read = 1;
     else fp->flag.write = 1;
         
@@ -145,10 +132,8 @@ FILE *fopen(char *name, char *mode)
 int _fillbuf(FILE *fp)
 {
     int bufsize;
-    /* if ((fp->flag&(_READ|_EOF|_ERR)) != _READ) */
     if (fp->flag.read==0 || fp->flag.eof==1 || fp->flag.err==1)
 	return EOF;
-    /* bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ; */
     bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
     if (fp->base == NULL) /* no buffer yet */
 	if ((fp->base = (char *) malloc(bufsize)) == NULL)
@@ -157,10 +142,8 @@ int _fillbuf(FILE *fp)
     fp->cnt = read(fp->fd, fp->ptr, bufsize);
     if (--fp->cnt < 0) {
 	if (fp->cnt == -1)
-	    /* fp->flag |= _EOF; */
 	    fp->flag.eof = 1;
 	else
-	    /* fp->flag |= _ERR; */
 	    fp->flag.err = 1;
 	fp->cnt = 0;
 	return EOF;
