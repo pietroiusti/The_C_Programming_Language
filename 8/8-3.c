@@ -9,38 +9,27 @@
 #define BUFSIZ  1024
 #define OPEN_MAX 20  /* max #files open at once */
 
-struct flags {
-    unsigned int read  :1;
-    unsigned int write :1;
-    unsigned int unbuf :1;
-    unsigned int eof   :1;
-    unsigned int err   :1;
-};
-
 typedef struct _iobuf {
     int  cnt;   /* characters left */
     char *ptr;  /* next character position */
     char *base; /* location of the buffer */
-    struct flags flag;   /* mode of file access */
+    int flag;   /* mode of file access */
     int fd;     /* file descriptor */
 } FILE;
 
-/* enum _flags { */
-/*     _READ    = 01,    /\* file open for reading *\/ */
-/*     _WRITE   = 02,    /\* file open for writing *\/ */
-/*     _UNBUF   = 04,    /\* file is ubuffered *\/ */
-/*     _EOF     = 010,   /\* EOF has occurred on this file *\/ */
-/*     _ERR     = 020    /\* error occurred on this file *\/ */
-/* }; */
+enum _flags {
+    _READ    = 01,    /* file open for reading */
+    _WRITE   = 02,    /* file open for writing */
+    _UNBUF   = 04,    /* file is ubuffered */
+    _EOF     = 010,   /* EOF has occurred on this file */
+    _ERR     = 020    /* error occurred on this file */
+};
 
 //extern FILE _iob[OPEN_MAX];
 FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
-    /* { 0, (char *) 0, (char *) 0, _READ, 0 }, */
-    /* { 0, (char *) 0, (char *) 0, _WRITE, 1 }, */
-    /* { 0, (char *) 0, (char *) 0, _WRITE | _UNBUF, 2 } */
-    { 0, (char *) 0, (char *) 0, {1,0,0,0,0}, 0 },
-    { 0, (char *) 0, (char *) 0, {0,1,0,0,0}, 1 },
-    { 0, (char *) 0, (char *) 0, {0,1,1,0,0}, 2 }
+    { 0, (char *) 0, (char *) 0, _READ, 0 },
+    { 0, (char *) 0, (char *) 0, _WRITE, 1 },
+    { 0, (char *) 0, (char *) 0, _WRITE | _UNBUF, 2 }
 };
 
 #define stdin    (&_iob[0])
@@ -104,8 +93,7 @@ FILE *fopen(char *name, char *mode)
     if (*mode != 'r' && *mode != 'w' && *mode != 'a')
 	return NULL;
     for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
-	/* if ((fp->flag & (_READ | _WRITE)) == 0) */
-	if (fp->flag.read == 0 && fp->flag.write == 0)
+	if ((fp->flag & (_READ | _WRITE)) == 0)
 	    break; /* found free slot */
     /* atm only the first FILEs in the _iob array have been
      * initialized. Isn't it problem that fp points to garbage? */
@@ -132,9 +120,7 @@ FILE *fopen(char *name, char *mode)
     fp->fd = fd;
     fp->cnt = 0;
     fp->base = NULL;
-    //fp->flag = (*mode == 'r') ? _READ : _WRITE;
-    if (*mode == 'r') fp->flag.read = 1;
-    else fp->flag.write = 1;
+    fp->flag = (*mode == 'r') ? _READ : _WRITE;
 
     return fp;
 }
@@ -143,11 +129,9 @@ FILE *fopen(char *name, char *mode)
 int _fillbuf(FILE *fp)
 {
     int bufsize;
-    /* if ((fp->flag&(_READ|_EOF|_ERR)) != _READ) */
-    if (fp->flag.read==0 || fp->flag.eof==1 || fp->flag.err==1)
+    if ((fp->flag&(_READ|_EOF|_ERR)) != _READ)
 	return EOF;
-    /* bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ; */
-    bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
+    bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
     if (fp->base == NULL) /* no buffer yet */
 	if ((fp->base = (char *) malloc(bufsize)) == NULL)
 	    return EOF; /* can't get buffer */
@@ -155,11 +139,9 @@ int _fillbuf(FILE *fp)
     fp->cnt = read(fp->fd, fp->ptr, bufsize);
     if (--fp->cnt < 0) {
 	if (fp->cnt == -1)
-	    /* fp->flag |= _EOF; */
-	    fp->flag.eof = 1;
+	    fp->flag |= _EOF;
 	else
-	    /* fp->flag |= _ERR; */
-	    fp->flag.err = 1;
+	    fp->flag |= _ERR;
 	fp->cnt = 0;
 	return EOF;
     }
@@ -173,9 +155,9 @@ int _flushbuf(int x, FILE *fp)
     // the output file yet, or when we need to flush because the base
     // buffer is full. In both cases, fp->cnt is supposed to be -1.
     int bufsize;
-    if (fp->flag.write==0||fp->flag.err==1)
+    if ((fp->flag&(_WRITE|_ERR) != _WRITE))
 	return EOF;
-    bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
+    bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
 
     if (fp->base == NULL)
 	if ((fp->base = (char *) malloc(bufsize)) == NULL)
@@ -188,7 +170,7 @@ int _flushbuf(int x, FILE *fp)
     fp->ptr = fp->base;
 
     if (--fp->cnt < 0) {
-	fp->flag.err = 1;
+	fp->flag |= _ERR;
 	fp->cnt = 0; //perhaps unnecessary.. but it doesn't hurt
 	return EOF;
     }
@@ -210,7 +192,7 @@ int fflush(FILE *fp)
 	// Loop over FILE structs in _iob, skipping stdin, stdout and
 	// stderr
 	for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
-	    if (fp->flag.write==1&&fp->flag.err==0)
+	    if ((fp->flag & (_WRITE|_ERR)) != _WRITE)
 		if (flush(fp)==EOF)
 		    return EOF;
     } else
@@ -224,9 +206,9 @@ int fflush(FILE *fp)
  * EOF if error, zero otherwise. */
 int fclose(FILE *fp)
 {
-    if (fp->flag.write==1)
+    if (fp->flag & _WRITE)
 	if (fflush(fp) == EOF) {
-	    fp->flag.err = 1;
+	    fp->flag |= _ERR;
 	    return EOF;
 	}
 
