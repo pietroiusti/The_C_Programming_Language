@@ -46,6 +46,7 @@ FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
 int _fillbuf(FILE *);
 int _flushbuf(int , FILE *);
 int fflush(FILE *);
+static int fflush_flush(FILE *fp);
 int fclose(FILE *fp);
 int gp_fseek(FILE *fp, long offset, int origin);
 
@@ -201,25 +202,25 @@ int _flushbuf(int x, FILE *fp)
  * otherwise. fflush(NULL) flushes all output streams. */
 int fflush(FILE *fp)
 {
-    int flush(FILE *fp) {
-	int bytestowrite = BUFSIZ - fp->cnt;
-	if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
-	    return EOF;
-	fp->cnt = 0;
-	fp->ptr = fp->base;
-    }
-
     if (fp == NULL) {
 	// Loop over FILE structs in _iob, skipping stdin, stdout and
 	// stderr
 	for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
 	    if ((fp->flag & (_WRITE|_ERR)) != _WRITE)
-		if (flush(fp)==EOF)
+		if (fflush_flush(fp)==EOF)
 		    return EOF;
     } else
-	return flush(fp);
+	return fflush_flush(fp);
 
     return 0;
+}
+
+static int fflush_flush(FILE *fp) {
+    int bytestowrite = BUFSIZ - fp->cnt;
+    if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
+	return EOF;
+    fp->cnt = 0;
+    fp->ptr = fp->base;
 }
 
 /* fclose: flush unwritten data, discard unread buffered input, free
