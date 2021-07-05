@@ -10,32 +10,57 @@
 
 int main(void)
 {
-    printf("char:\n");
-    printf("Minimum value for 'signed char': %d\n", SCHAR_MIN);
-    printf("Maximim value for 'signed char': %d\n", SCHAR_MAX);
-    printf("Minimum value for 'unsigned char': %u\n", 0);
-    printf("Maximum value for 'unsigned char': %u\n", UCHAR_MAX);
-    printf("\n");
+    // signed
 
-    printf("short:\n");
-    printf("Minimum value for 'signed short int': %d\n", SHRT_MIN);
-    printf("Maximum value for 'signed short int': %d\n", SHRT_MAX);
-    printf("Minimum value for 'unsigned short int': %u\n", 0);
-    printf("Maximum value for 'unsinged short int':%u\n", USHRT_MAX);
-    printf("\n");
+    printf("Minimum value for 'signed char':\n", SCHAR_MIN);
+    printf("\t%d\n", SCHAR_MIN);
+    printf("\t%d\n", ~(char)((unsigned char) ~0 >> 1));
 
-    printf("int:\n");
-    printf("Minimum value for 'signed int': %d\n", INT_MIN);
-    printf("Maximum value for 'signed int': %d\n", INT_MAX);
-    printf("Minimum value for 'unsigned int': %u\n", 0);
-    printf("Maximum value for 'unsinged int': %u\n", UINT_MAX);
-    printf("\n");
+    printf("Maximum value for 'signed char':\n");
+    printf("\t%d\n", SCHAR_MAX);
+    printf("\t%d\n", (char)((unsigned char) ~0 >> 1));
+
+    printf("Minimum value for 'signed short int':\n");
+    printf("\t%d\n", SHRT_MIN);
+    printf("\t%d\n", ~(short)((unsigned short) ~0 >> 1));
+
+    printf("Maximum value for 'signed short int':\n");
+    printf("\t%d\n", SHRT_MAX);
+    printf("\t%d\n", (short)((unsigned short) ~0 >> 1));
+
+    printf("Minimum value for 'signed int':\n");
+    printf("\t%d\n", INT_MIN);
+    printf("\t%d\n", ~(int)((unsigned int) ~0 >> 1));
+
+    printf("Maximum value for 'signed int':\n");
+    printf("\t%d\n", INT_MAX);
+    printf("\t%d\n", (int)((unsigned int) ~0 >> 1));
+
+    printf("Minimum value for 'signed long int':\n");
+    printf("\t%ld\n", LONG_MIN);
+    printf("\t%ld\n", ~(long)((unsigned long) ~0 >> 1));
+
+    printf("Maximum value for 'signed long int':\n");
+    printf("\t%ld\n", LONG_MAX);
+    printf("\t%ld\n", (long)((unsigned long) ~0 >> 1));
+
+    // unsigned
+
+    printf("Maximum value for 'unsigned char':\n");
+    printf("\t%u\n", UCHAR_MAX);
+    printf("\t%u\n", (unsigned char) ~0);
     
-    printf("long:\n");
-    printf("Minimum value for 'signed long int':%ld\n", LONG_MIN);
-    printf("Maximum value for 'signed long int':%ld\n", LONG_MAX);
-    printf("Minimum value for 'unsigned long int':%lu\n", 0);
-    printf("Maximum value for 'unsinged long int':%lu\n", ULONG_MAX);
- 
+    printf("Maximum value for 'unsigned short int':\n");
+    printf("\t%u\n", USHRT_MAX);
+    printf("\t%u\n", (unsigned short) ~0);
+
+    printf("Maximum value for 'unsinged int':\n");
+    printf("\t%u\n", UINT_MAX);
+    printf("\t%u\n", (unsigned int) ~0);
+
+    printf("Maximum value for 'unsinged long int':\n");
+    printf("\t%u\n", ULONG_MAX);
+    printf("\t%u\n", (unsigned long) ~0);
+
     return 0;
 }
