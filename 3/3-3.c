@@ -10,24 +10,38 @@ void expand(char s1[], char s2[]);
 
 int main(void)
 {
-    char foo[] = "a-z";
+    char foo[] = "-a-f-q-0-9F-P-";
     char bar[1000];
 
     expand(foo, bar);
 
-    printf(bar);
+    printf("%s\n", bar);
 
     return 0;
 }
 
 void expand(char s1[], char s2[])
 {
-    char foo = s1[0];
-    int i;
-    for (foo = s1[0], i = 0; foo <= s1[2]; foo++, i++) {
-	s2[i] = foo;
+    int i;  // index for reading from s1
+    int j = 0;  // index for writing into s2
+    char c;
+    for (i = 0; s1[i] != '\0'; i++) {
+	if (s1[i] == '-') {
+	    if (i == 0) {
+		s2[j] = '-';
+		j++;
+	    } else if (s1[i+1] == '\0') {
+		s2[j] = '-';
+		j++;
+	    } else {
+		for (c=s1[i-1]; c<=s1[i+1]; c++,j++) {
+		    if (s2[j-1] != c)
+			s2[j] = c;
+		    else
+			j--;
+		}
+	    }
+	}
     }
-    s2[i] = '\0';
-    // TODO: handle multiple expansions and leading/trailing '-'
+    s2[j] = '\0';
 }
-
