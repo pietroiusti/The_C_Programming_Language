@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
 void reverse(char s[]);
-void itoa(int n, char s[]);
+void itoa1(int n, char s[]);
+void itoa2(int n, char s[]);
 
 /* 
    In a two's complement number representation, our version of itoa
@@ -19,34 +22,57 @@ int main(void)
     /*
     Suppose n == -2147483648. This number is the largest negative
     number we can put in a int (that is, the largest negative number
-    we can represent with 4 bites). itoa will do n = -n. But -n is too
-    big to be stored in a int. In fact, if we try to make n positive
-    by negating it, we get n itself back (given the way two's
-    complement representation works). So n will still be
-    negative. Given so, the condition n /= 10 will evaluate to a
-    negative number. Given so, the while loop body will get executed
-    only once.
+    we can represent with 4 bites --- assuming that a int is 4
+    bytes). itoa will do n = -n. But -n is too big to be stored in a
+    int. In fact, if we try to make n positive by negating it, we get
+    n itself back (given the way two's complement representation
+    works). So n will still be negative. Given so, the condition n /=
+    10 will evaluate to a negative number. Given so, the while loop
+    body will get executed only once.
     */
 
-    itoa(i, word);
+    itoa1(n, word);
     printf("%s\n", word);
 
     return 0;
 }
 
-/* itoa: convert n to characters in s */
-void itoa(int n, char s[])
+/* 
+   simple (non-ideal) solution: 
+*/
+void itoa1(int n, char s[])
 {
     int i, sign;
+    long l = n;
 
-    if ((sign = n) < 0) /* record sign */
-	n = -n;         /* make n positive */
+
+    if ((sign = l) < 0) /* record sign */
+	l = -l;         /* make n positive */
     i = 0;
     do { /* generate digits in reverse order */
-	s[i++] = n % 10 + '0'; /* get next digit */
-    } while ((n /= 10) > 0);
+	s[i++] = l % 10 + '0'; /* get next digit */
+    } while ((l /= 10) > 0);
     if (sign < 0)
 	s[i++] = '-';
+    s[i] = '\0';
+    reverse(s);
+}
+
+/* 
+   better solution
+   from: https://clc-wiki.net/wiki/K%26R2_solutions:Chapter_3:Exercise_4
+*/
+void itoa2(int n, char s[]) {
+    int i, sign;
+    sign = n;
+    
+    i = 0;
+    do {
+        s[i++] = abs(n % 10) + '0'; // first change from original
+    } while ( n /= 10 ); // second change from original
+    if (sign < 0)
+        s[i++] = '-';
+    
     s[i] = '\0';
     reverse(s);
 }
