@@ -1,0 +1,2872 @@
+My solutions to K&R's exercises.
+
+* Chapter 1: A Tutorial Introduction
+** 1-1
+Run the "Hello, world" program on your system. Experiment with leaving
+out parts of the program, to see what error messages you get.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+          printf("Hello, world\n");
+  }
+#+end_src
+** 1-2
+Experiment to find out what happens when printf's argument string
+contains \c, where c is some character not listed above.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      printf("Alert (bell) character, \\a:\a");
+      printf("\n");
+
+      printf("Backspace, \\b:\b");
+      printf("\n");
+
+      printf("Formfeed, \\f:\f");
+      printf("\n");
+
+      printf("Newline, \\n:\n");
+      printf("\n");
+
+      printf("Carriage return, \\r:\r");
+      printf("\n");
+
+      printf("Horizontal tab, \\t:\t");
+      printf("\n");
+
+      printf("Vertical tab, \\v:\v");
+      printf("\n");
+
+      printf("Backslash, \\\\: \\");
+      printf("\n");
+
+      printf("Question mark, \\?: \?");
+      printf("\n");
+
+      printf("Single quote, \\': \'");
+      printf("\n");
+
+      printf("Double quote, \\\": \"");
+      printf("\n");
+
+      printf("Octal number, \\ooo");
+      printf("\n");
+
+      printf("Hexadecimal number, \\xhh");
+      printf("\n");
+  }
+#+end_src
+
+** 1-3
+Modify the temperature conversion program to print a heading above the
+table.
+   
+#+begin_src C
+  #include <stdio.h>
+
+    main()
+  {
+      float fahr, celsius;
+      int lower, upper, step;
+
+      lower = 0;   /* lower limit of temperature table */
+      upper = 300; /* upper limit */
+      step = 20;   /* step size */
+
+      printf("----\t\t-------\n");
+      printf("Fahr\t\tCelsius\n");
+      printf("----\t\t-------\n");
+
+      fahr = lower;
+      while (fahr <= upper) {
+          celsius = (5.0/9.0) * (fahr-32.0);
+          printf("%3.0f\t\t%6.1f\n", fahr, celsius);
+          fahr = fahr + step;
+      }
+  }
+#+end_src
+
+** 1-4
+Write a program to print the corresponding Celsius to Fahrenheit
+table.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      float fahr, celsius;
+      int lower, upper, step;
+
+      lower = 0; /* lower limit of temperature talbe */
+      upper = 300; // upper limit
+      step = 20; /* step size */
+
+      /*heading*/
+      printf("----\t\t-------\n");
+      printf("Celsius\t\tFahr\n");
+      printf("----\t\t-------\n");
+
+      celsius = lower;
+      while (celsius <= upper) {
+          fahr = (celsius / (5.0/9.0)) + 32.0;
+          printf("%3.0f\t\t%5.0f\n", celsius, fahr);
+          celsius = celsius + step;
+      }
+  }
+#+end_src
+
+** 1-5
+Modify the temperature conversion program to print the table in
+reverse order, that is, from 300 degrees to 0.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      int fahr;
+
+      for (fahr = 300; fahr >= 0; fahr = fahr - 20)
+          printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+  }
+#+end_src
+
+** 1-6
+Verify that the expression getchar() != EOF is 0 or 1.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      printf("%d\n", getchar() != EOF);
+  }
+#+end_src
+
+** 1-7
+Write a program to print the value of EOF.
+#+begin_src C
+#include <stdio.h>
+
+main()
+{
+    printf("%c\n", EOF);
+}
+#+end_src
+
+** 1-8
+Write a program to count blanks, tabs and newlines.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      int c, blanks, tabs, newlines;
+      blanks = 0;
+      tabs = 0;
+      newlines = 0;
+
+      while((c = getchar()) != EOF) {
+          if (c == '\n')
+              ++newlines;
+          if (c == ' ')
+              ++blanks;
+          if (c == '\t')
+              ++tabs;
+      }
+      printf("Newlines = %d\n", newlines);
+      printf("Blanks = %d\n", blanks);
+      printf("Tabs = %d\n", tabs);
+  }
+#+end_src
+
+** 1-9
+Write a program to copy its input to its output, replacing each string
+of one or more blanks by a single blank.
+
+#+begin_src C
+  #include <stdio.h>
+
+
+  main()
+  {
+      int current, previous;  
+
+      while ((current = getchar()) != EOF) {
+          if (current != ' ') {
+              putchar(current);
+              previous = current;
+          }
+          if (current == ' ') {
+              if (previous == ' ')
+                  ;
+              if (previous != ' ') {
+                  putchar(' ');
+                  previous = ' ';
+              }
+          }
+      }
+  }
+#+end_src
+
+Alternative approach:
+
+#+begin_src C
+main()
+{
+    int c, c2;
+
+    while ((c = getchar()) != EOF) {
+        if ( c == ' ') {
+            putchar(' ');
+            while ((c2 = getchar()) == ' ') {
+                ;
+            }
+            putchar(c2);
+        } 
+        if ( c != ' ') 
+            putchar(c);
+    }
+}
+#+end_src
+
+** 1-10
+Write a program to copy its input to its output, replacing each tab by
+\t, each backspace by \b, and each backslash by \\. This makes tabs
+and backspaces visible in an unambiguous way.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      int c;
+
+      while ((c = getchar()) != EOF) {
+          if (c == '\t') {
+              putchar('\\');
+              putchar('t');
+          }
+          if (c == '\b') {
+              putchar('\\');
+              putchar('b');
+          }
+          if (c == '\\') {
+              putchar('\\');
+              putchar('\\');
+          }
+
+          if (c != '\t') {
+              if (c != '\b') {
+                  if (c != '\\') {
+                      putchar(c);
+                  }
+              }
+          }
+      }
+  }
+#+end_src
+
+** 1-12
+Write a program that prints its input one word per line.
+
+#+begin_src C
+  #include <stdio.h>
+
+  #define IN  1
+  #define OUT 0
+
+  main()
+  {
+      int c, state;
+
+      state = OUT;
+      while ((c = getchar()) != EOF) {
+          if (c == ' ' || c == '\n' || c == '\t') {
+              if (state != OUT) {
+                  state = OUT;
+                  putchar('\n');
+              }
+          }
+          else if (c != ' ' && c != '\n' && c != '\t') {
+              state = IN;
+              putchar(c);
+          }
+      }
+  }
+#+end_src
+
+** 1-13
+Write a program to print a histogram of the lengths of words in its
+input. It easy to draw a the histogram with the bars horizontal; a
+vertical orientation is more challenging.
+
+#+begin_src C
+#include <stdio.h>
+
+#define IN    1    /* inside a word */
+#define OUT   0    /* outside a word */
+
+/* Horizontal histogram version. */
+
+main()
+{
+    int c, i, j, nw, state;
+
+    int current_word_length = 0;
+    int word_lengths[100];
+
+    for (i = 0; i < 100; ++i)
+	word_lengths[i] = 0;
+
+    state = OUT;
+    nw = 0;
+    while ((c = getchar()) != EOF) {
+	if (c == ' ' || c == '\n' || c == '\t') {
+	    if (state == IN) {
+		state = OUT;
+		word_lengths[nw-1] = current_word_length;
+		current_word_length = 0;
+	    }
+	}
+	else if (state == OUT) {
+	    state = IN;
+	    ++nw;
+	    ++current_word_length;
+	}
+	else if (state == IN)
+	    ++current_word_length;
+    }
+
+    for (i = 0; i < nw; ++i) {
+	for (j = 0; j < word_lengths[i]; ++j) {
+	    printf("#");
+	}
+	printf("\n");
+    }
+}
+#+end_src
+
+** 1-14
+Write a program to print a histogram of the frequencies of different
+characters in its input.
+
+#+begin_src C
+  #include <stdio.h>
+
+  main()
+  {
+      int c, i, j, state;
+
+      int char_lengths[300];
+      for (i = 0; i < 300; ++i) {
+          char_lengths[i] = 0;
+      }
+
+      while ((c = getchar()) != EOF) {
+          ++char_lengths[c];
+      }
+
+      printf("\n");
+
+      for (i = 0; i < 300; ++i) {
+          if (char_lengths[i] != 0) {
+              printf("%c: ", i);
+              for (j = 0 ; j < char_lengths[i]; ++j) {
+                  printf("#");
+              }
+              printf("\n");
+          }
+      }
+  }
+#+end_src
+
+** 1-15
+Rewrite the temperature conversion program of Section 1.2 to use a
+function for conversion.
+
+#+begin_src C
+  #include <stdio.h>
+
+  float fahr_to_celsius(float fahr);
+
+  main()
+  {
+      float fahr, celsius;
+      int lower, upper, step;
+
+      lower = 0; /* lower limit of temperature talbe */
+      upper = 300; // upper limit
+      step = 20; /* step size */
+
+      fahr = lower;
+      while (fahr <= upper) {
+          celsius = fahr_to_celsius(fahr);
+          printf("%3.0f %6.1f\n", fahr, celsius);
+          fahr = fahr + step;
+      }
+
+      return 0;
+  }
+
+  float fahr_to_celsius(float fahr)
+  {
+      return (5.0/9.0) * (fahr-32.0);
+  }
+#+end_src
+
+** 1-16
+Revise the main routine of the longest-line program so it will
+correctly print the length of arbitrarily long input lines, and as
+much as possible of the text.
+
+#+begin_src C
+  #include <stdio.h>
+  #define MAXLINE 1000
+
+  int get_line(char line[], int maxline);
+  void copy(char to[], char from[]);
+
+  main()
+  {
+      int len;
+      int max;
+      int c, i;
+      char line[MAXLINE];
+      char longest[MAXLINE];
+
+      max = 0;
+      while ((len = get_line(line, MAXLINE)) > 0)
+          if (len < MAXLINE-1) { /* len is less than the max length */
+              if (len > max) {
+                  max = len;
+                  copy(longest, line);
+              }
+          } else {
+              if (line[MAXLINE-2] == '\n') {
+                  if (len > max) {
+                      max = len;
+                      copy(longest, line);
+                  }
+              } else {
+                  i = 0;
+                  while ((c = getchar()) != '\n' && c != EOF)
+                      ++i;
+                  len = len + i;
+                  if (len > max) {
+                      max = len;
+                      copy(longest, line);
+                  }
+              }
+          }
+
+      if (max > 0) {
+          printf("%s", longest);
+          if (max > MAXLINE-1)
+              printf("\n%i\n", max);
+          else
+              printf("%i\n", max);
+      }
+  }
+
+  int get_line(char s[], int lim)
+  {
+      int c, i;
+
+      for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+          s[i] = c;
+      if (c == '\n') {
+          s[i] = c;
+          ++i;
+      }
+      s[i] = '\0';
+      return i;
+  }
+
+  void copy(char to[], char from[])
+  {
+      int i;
+
+      i = 0;
+      while ((to[i] = from[i]) != '\0')
+          ++i;
+  }
+#+end_src
+
+** 1-17
+Write a program to print all iput lines that are longer 80 characters.
+
+#+begin_src C
+  #include <stdio.h>
+
+  #define MAXLINE 1000
+  #define MAXTEXT 10000
+
+  void copy_input(char to[]);
+  void print_lines(char text[], int limit);
+
+  main()
+  {
+      char text[MAXTEXT];
+
+      copy_input(text);
+
+      printf("Lines longer than 80 chars:\n");
+      print_lines(text, 80);
+  }
+
+  /* copy input into `to` */
+  void copy_input(char to[])
+  {
+      int c, i;
+    
+      for (i = 0; (c = getchar()) != EOF && i < MAXTEXT; ++i) {
+          to[i] = c;
+      }
+      to[i] = '\0';
+  }
+
+  /* print lines from `text` whose length > `limit` */
+  void print_lines(char text[], int limit)
+  {
+      int i;
+      char line[MAXLINE];
+      int j; /* index for line */
+
+      j = 0;
+      for (i = 0; text[i] != '\0'; ++i) {
+          line[j] = text[i];
+          ++j;
+          if (text[i] == '\n') {
+              if (j-1 > limit ) {
+                  line[j] = '\0';
+                  printf(line);
+              }
+              j = 0;
+          }
+      }
+      line[j] = '\0';
+      if (j-1 > limit)
+          printf(line);
+  }
+#+end_src
+
+** 1-18
+Write a program to remove trailing blanks and tabs from each line of
+input, and to delete entirely blank lines.
+#+begin_src C
+  #include <stdio.h>
+  #define MAXLINE 1000
+
+  int getLine(char s[], int lim);
+  void reverse(char to[], char s[], int length);
+
+  main()
+  {
+      int len;
+      char line[MAXLINE];
+      char reversed[MAXLINE];
+
+      while ((len = getLine(line, MAXLINE)) > 0) {
+          reverse(reversed, line, len);
+          printf("%s\n", reversed);
+      }
+
+      return 0;
+  }
+
+  /* getLine: read a line into s, return length */
+  int getLine(char s[], int lim)
+  {
+      int c, i;
+
+      for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+          s[i] = c;
+      if (c == '\n') {
+          s[i] = c;
+          ++i;
+      }
+      s[i] = '\0';
+      return i;
+  }
+
+  /*  reverse string 's' into 'to' */
+  void reverse(char to[], char s[], int length)
+  {
+      int i, j;
+
+      /* length -2 to skip '\0' */
+      for (i = length-2, j = 0; i >= 0; --i, ++j) {
+          to[j] = s[i];
+      }
+      to[j] = '\0';
+  }
+#+end_src
+
+** 1-19
+Write a function ~reverse(s)~ that reverses the character string
+~s~. Use it to write a program that reverses its input a line at a
+time.
+
+#+begin_src C
+  #include <stdio.h>
+  #define MAXLINE 1000
+
+  int getLine(char s[], int lim);
+  void reverse(char to[], char s[], int length);
+
+  main()
+  {
+      int len;
+      char line[MAXLINE];
+      char reversed[MAXLINE];
+
+      while ((len = getLine(line, MAXLINE)) > 0) {
+          reverse(reversed, line, len);
+          printf("%s\n", reversed);
+      }
+
+      return 0;
+  }
+
+  /* getLine: read a line into s, return length */
+  int getLine(char s[], int lim)
+  {
+      int c, i;
+
+      for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+          s[i] = c;
+      if (c == '\n') {
+          s[i] = c;
+          ++i;
+      }
+      s[i] = '\0';
+      return i;
+  }
+
+  /*  reverse string 's' into 'to' */
+  void reverse(char to[], char s[], int length)
+  {
+      int i, j;
+
+      /* length -2 to skip '\0' */
+      for (i = length-2, j = 0; i >= 0; --i, ++j) {
+          to[j] = s[i];
+      }
+      to[j] = '\0';
+  }
+#+end_src
+* Chapter 2: Types, Operators, and Expressions
+** 2-1
+Write a program to determine the ranges of char, short, int, and long
+variables, both signed and unsigned, by printing appropriate values
+from standard headers and by direct computation.  Harder if you
+compute them: determine the ranges of the various floating-point
+types.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <limits.h>
+
+  int main(void)
+  {
+      // signed
+
+      printf("Minimum value for 'signed char':\n", SCHAR_MIN);
+      printf("\t%d\n", SCHAR_MIN);
+      printf("\t%d\n", ~(char)((unsigned char) ~0 >> 1));
+
+      printf("Maximum value for 'signed char':\n");
+      printf("\t%d\n", SCHAR_MAX);
+      printf("\t%d\n", (char)((unsigned char) ~0 >> 1));
+
+      printf("Minimum value for 'signed short int':\n");
+      printf("\t%d\n", SHRT_MIN);
+      printf("\t%d\n", ~(short)((unsigned short) ~0 >> 1));
+
+      printf("Maximum value for 'signed short int':\n");
+      printf("\t%d\n", SHRT_MAX);
+      printf("\t%d\n", (short)((unsigned short) ~0 >> 1));
+
+      printf("Minimum value for 'signed int':\n");
+      printf("\t%d\n", INT_MIN);
+      printf("\t%d\n", ~(int)((unsigned int) ~0 >> 1));
+
+      printf("Maximum value for 'signed int':\n");
+      printf("\t%d\n", INT_MAX);
+      printf("\t%d\n", (int)((unsigned int) ~0 >> 1));
+
+      printf("Minimum value for 'signed long int':\n");
+      printf("\t%ld\n", LONG_MIN);
+      printf("\t%ld\n", ~(long)((unsigned long) ~0 >> 1));
+
+      printf("Maximum value for 'signed long int':\n");
+      printf("\t%ld\n", LONG_MAX);
+      printf("\t%ld\n", (long)((unsigned long) ~0 >> 1));
+
+      // unsigned
+
+      printf("Maximum value for 'unsigned char':\n");
+      printf("\t%u\n", UCHAR_MAX);
+      printf("\t%u\n", (unsigned char) ~0);
+    
+      printf("Maximum value for 'unsigned short int':\n");
+      printf("\t%u\n", USHRT_MAX);
+      printf("\t%u\n", (unsigned short) ~0);
+
+      printf("Maximum value for 'unsinged int':\n");
+      printf("\t%u\n", UINT_MAX);
+      printf("\t%u\n", (unsigned int) ~0);
+
+      printf("Maximum value for 'unsinged long int':\n");
+      printf("\t%u\n", ULONG_MAX);
+      printf("\t%u\n", (unsigned long) ~0);
+
+      return 0;
+  }
+#+end_src
+** 2-2
+Write a loop equivalent to the for loop above without using && or ||.
+
+#+begin_src C
+  #include <stdio.h>
+
+  /*
+   ,*      for (i = 0; i<lim-1 && (c=getchar()) != '\n' && c != EOF; ++i)
+   ,*          s[i] = c;
+   ,*
+   ,*/
+
+  main()
+  {
+      /* for (i = 0; i<lim-1 && (c=getchar()) != '\n' && c != EOF; ++i) { */
+      /* 	s[i] = c; */
+      /* } */
+
+      int i = 0;
+      int keep_going = 1;
+      int lim = 10;
+      while (keep_going) {
+          if (i >= lim-1)
+              keep_going = 0;
+          else if ((c=getchar()) == '\n')
+              keep_going = 0;
+          else if (c == EOF)
+              keep_going = 0;
+          else {
+              s[i] = c;
+          }
+          ++i;
+      }
+
+      return 0;
+  }
+#+end_src
+
+** 2-3
+Write the function htoi(s), which converts a string of hexadecimal
+digits (including an optional 0x or 0X) into its equivalent integer
+value.  The allowable digits are 0 through 9, a through f, and A
+through F.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <ctype.h>
+
+  int htoi(char s[]);
+
+  int main(void)
+  {
+      char hexadecimal[] = "0xAb67";
+
+      printf("%d\n", htoi(hexadecimal));
+
+      return 0;
+  }
+
+  int htoi(char s[]) {
+      int i = 0;
+      int n = 0;
+    
+      if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
+          i += 2;
+    
+      while ( isdigit(s[i]) || (s[i] >= 'a' && s[i] <= 'f') ||
+              (s[i] >= 'A' && s[i] <= 'F')) {
+          if ( isdigit(s[i]) )
+              n = 16 * n + (s[i] - '0');    
+          else
+              n = 16 * n + (tolower(s[i]) - 'W');
+          i++;
+      }
+
+      return n;
+  }
+#+end_src
+
+** 2-4
+Write an alternate version of squeeze(s1, s2) that deletes each
+character in s1 that matches any character in the string s2.
+
+#+begin_src C
+  #include <stdio.h>
+
+  void squeeze(char s1[], char s2[]);
+
+  main()
+  {
+      char s1[100] = "Hello world";
+      char s2[100] = "Hi-there";
+      squeeze(s1, s2);
+      printf("%s\n", s1);
+  }
+
+  void squeeze(char s1[], char s2[])
+  {
+      // return 0 if c is in s, otherwise 1
+      int is_in(int c, char s[])
+      {
+          int i;
+          for (i = 0; s[i] != '\0'; i++)
+              if (s[i] == c)
+                  return 1;
+          return 0;
+      }
+    
+      int i, j;
+      for (i = j = 0; s1[i] != '\0'; i++) {
+          if (!is_in(s1[i], s2))
+              s1[j++] = s1[i];
+      }
+      s1[j] = '\0';
+  }
+#+end_src
+
+** 2-5
+Write the function any(s1, s2), which returns the first location in
+the string s1 where any character from the string s2 occur, or -1 if
+s1 contains no character form s2. (The standard library function
+strpbrk does the same job but returns a pointer to the location.)
+
+#+begin_src C
+  #include <stdio.h>
+  #include <string.h>
+  #include <ctype.h>
+
+  int any(char s1[], char s2[]);
+
+  main()
+  {
+      char s1[100] = "Hello world";
+      char s2[100] = "-thr";
+      printf("%i\n", any(s1, s2));
+  }
+
+  int any(char s1[], char s2[])
+  {
+      // return 0 if c is in s, otherwise 1
+      int is_in(int c, char s[])
+      {
+          int i;
+          for (i = 0; s[i] != '\0'; i++)
+              if (s[i] == c)
+                  return 1;
+          return 0;
+      }
+
+      int i, j;
+      for (i = 0; s1[i] != '\0'; i++) {
+          if (is_in(s1[i], s2))
+              return i;
+      }
+      return -1;
+  }
+#+end_src
+
+** 2-6
+Write a function setbits(x,p,n,y) that returns x with the n bits that
+begin at position p set to the rightmost n bits of y, leaving the
+other bits unchanged.
+
+#+begin_src C
+  #include <stdio.h>
+
+  unsigned setbits(unsigned x, int p, int n, unsigned y);
+
+  int main(void)
+  {
+      printf("%i\n", setbits(63, 5, 3, 2));
+  }
+
+  unsigned setbits(unsigned x, int p, int n, unsigned y)
+  {
+      unsigned result;
+      int shift = p-n+1;
+
+      unsigned nmask = (1 << n) -1;
+
+      return (x & ~(nmask << shift)) | ((y & nmask) << shift);
+  }
+#+end_src
+
+** 2-7
+Write a function invert(x,p,n) that returns x with the n bits that
+begin at position p inverted (i.e., 1 changed into 0 and vice versa),
+leaving the others unchanged.
+
+#+begin_src C
+  #include <stdio.h>
+
+  unsigned invert(unsigned x, int p, int n);
+
+  int main(void)
+  {
+      printf("%u\n", invert(63, 6, 3));
+
+      return 0;
+  }
+
+  unsigned invert(unsigned x, int p, int n)
+  {
+      unsigned nmask = (1 << n) -1;
+      int shift = p-n+1;
+
+      return x ^ (nmask << shift);
+  }
+#+end_src
+
+** 2-8
+Write a function rightrot(x,n) that returns the value of the integer x
+rotated to the right by n bit positions.
+
+#+begin_src C
+  #include <stdio.h>
+
+  unsigned rightrot(unsigned x, int n);
+
+  int main(void)
+  {
+      printf("%u\n", rightrot(2, 2));
+
+      return 0;
+  }
+
+  unsigned rightrot(unsigned x, int n)
+  {
+      unsigned nmask = (1 << n) - 1;
+      int bitsize = (sizeof x) * 8;
+
+      return ((x & nmask) << (bitsize-n)) | x >> n;
+  }
+#+end_src
+
+** 2-9
+In a two's complement number system, x &= (x-1) deletes the rightmost
+1-bit in x. Explain why. Use this observation to write a faster
+version of bitcount.
+
+#+begin_src C
+  #include <stdio.h>
+
+  /*
+  In a two's complement system -1 is represented as all 1s. This means
+  that x-1 --- which is the same as x + (all 1s) --- will give back x
+  where:
+      - the rightmost 1-bit is flipped to 0;
+      - every bit on the left of it is left as it is;
+      - every bit on the right of it is set to 1.
+  So, &ing x-1 with x will gives you x where:
+      - the righmost 1-bit is flipped to 0;
+      - every bit on the left of it is left as it is;
+      - every bit on the right of it is set to 0.
+  ,*/
+
+  int bitcount(unsigned x);
+
+  int main(void)
+  {
+      printf("%i\n", bitcount(6));
+      printf("%i\n", bitcount(15));
+  }
+
+  /* bitcount: count 1-bits in x */
+  int bitcount(unsigned x)
+  {
+      int b;
+
+      for (b = 0; x != 0; x &= x-1)
+          b++;
+    
+      return b;
+  }
+#+end_src
+
+* Chapter 3: Control Flow
+** 3-1
+Our binary search makes two tests inside the loop, when one would
+suffice (at the price of more tests outside). Write a version with
+only one test inside the loop and measure the difference in run-time.
+
+#+begin_src C
+/* binsearch: find x in v[0] <= v[1] <= ... <= v[n-1] */
+int binsearch(int x, int v[], int n)
+{
+    int low, high, mid;
+
+    low = 0;
+    high = n - 1;
+    while (low <= high) {
+	mid = (low+high) / 2;
+	if (x < v[mid])
+	    high = mid - 1;
+	else if (x > v[mid])
+	    low = mid + 1;
+	else /* found match */
+	    return mid;
+    }
+    return -1; /* no match */
+}
+
+/* binsearch2: */
+int binsearch2(int x, int v[], int n)
+{
+    int low, high, mid;
+
+    low = 0;
+    high = n - 1;
+    mid = (low+high) / 2;
+    
+    while (low <= high && x != v[mid]) {
+	if (x < v[mid])
+	    high = mid - 1;
+	else
+	    low = mid + 1;
+	mid = (low+high) / 2;
+    }
+    
+    if (x == v[mid])
+        return mid;
+    else
+        return -1; /* no match */
+}
+#+end_src
+
+** 3-2
+Write a function escape(s,t) that converts characters like newline and
+tab into visible escape sequences like \n and \t as it copies the
+string t to s. Use a switch. Write a function for the other direction
+as well, converting escape sequences into real characters.
+
+#+begin_src C
+  #include <stdio.h>
+
+  void escape(char to[], char from[]);
+  void unescape(char to[], char from[]);
+
+  int main(void)
+  {
+      char foo[] = "Hello \t world!\n";
+      char bar[100];
+
+      escape(bar, foo);
+      printf("%s\n", bar);
+
+      char foobar[] = "Hello \\t world!\\n";
+      char baz[100];
+
+      unescape(baz, foobar);
+      printf("%s\n", baz);
+
+      return 0;
+  }
+
+  void escape(char to[], char from[])
+  {
+      int i, j;
+
+      i = j = 0;
+    
+      while (from[i] != '\0') {
+          switch(from[i]) {
+          case '\n':
+              to[j++] = '\\';
+              to[j] = 'n';
+              break;
+          case '\t':
+              to[j++] = '\\';
+              to[j] = 't';
+              break;
+          default:
+              to[j] = from[i];
+              break;
+          }
+          i++;
+          j++;
+      }
+  }
+
+  void unescape(char to[], char from[])
+  {
+      int i, j;
+
+      i = j = 0;
+
+      while (from[i] != '\0') {
+          if (from[i] == '\\') {
+              i++;
+              switch(from[i]) {
+              case 'n':
+                  to[j] = '\n';
+                  break;
+              case 't':
+                  to[j] = '\t';
+                  break;
+              default:
+                  to[j++] = '\\';
+                  to[j] = from[i];
+              }
+          } else {
+              to[j] = from[i];
+          }
+          i++;
+          j++;
+      }
+  }
+#+end_src
+
+** 3-3
+Write a function expand(s1,s2) that expands shorthand notations like
+a-z in the string s1 into the equivalent complete list abc...xyz in
+s2. Allow for letters of either case and digits, and be prepared to
+handle cases like a-b-c and a-z0-9 and -a-z. Arrange that a leading or
+trailing - is taken literally.
+
+#+begin_src C
+  #include <stdio.h>
+
+  void expand(char s1[], char s2[]);
+
+  int main(void)
+  {
+      char foo[] = "-a-f-q-0-9F-P-";
+      char bar[1000];
+
+      expand(foo, bar);
+
+      printf("%s\n", bar);
+
+      return 0;
+  }
+
+  void expand(char s1[], char s2[])
+  {
+      int i;  // index for reading from s1
+      int j = 0;  // index for writing into s2
+      char c;
+      for (i = 0; s1[i] != '\0'; i++) {
+          if (s1[i] == '-') {
+              if (i == 0) {
+                  s2[j] = '-';
+                  j++;
+              } else if (s1[i+1] == '\0') {
+                  s2[j] = '-';
+                  j++;
+              } else {
+                  for (c=s1[i-1]; c<=s1[i+1]; c++,j++) {
+                      if (s2[j-1] != c)
+                          s2[j] = c;
+                      else
+                          j--;
+                  }
+              }
+          }
+      }
+      s2[j] = '\0';
+  }
+#+end_src
+
+** 3-4
+In a two's complement number representation, our version of itoa does
+not handle the largest negative number, that is, the value of n equal
+to -(2^(wordsize-1)). Explain why not. Modify it to print that value
+correctly, regardless of the machine on which it runs.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <string.h>
+  #include <limits.h>
+  #include <stdlib.h>
+
+  void reverse(char s[]);
+  void itoa1(int n, char s[]);
+  void itoa2(int n, char s[]);
+
+  int main(void)
+  {
+      int n = -2147483648;
+      char word[100];
+
+      /*
+      Suppose n == -2147483648. This number is the largest negative
+      number we can put in a int (that is, the largest negative number
+      we can represent with 4 bites --- assuming that a int is 4
+      bytes). itoa will do n = -n. But -n is too big to be stored in a
+      int. In fact, if we try to make n positive by negating it, we get
+      n itself back (given the way two's complement representation
+      works). So n will still be negative. Given so, the condition n /=
+      10 will evaluate to a negative number. Given so, the while loop
+      body will get executed only once.
+      ,*/
+
+      itoa1(n, word);
+      printf("%s\n", word);
+
+      return 0;
+  }
+
+  /* 
+     simple (non-ideal) solution: 
+  ,*/
+  void itoa1(int n, char s[])
+  {
+      int i, sign;
+      long l = n;
+
+
+      if ((sign = l) < 0) /* record sign */
+          l = -l;         /* make n positive */
+      i = 0;
+      do { /* generate digits in reverse order */
+          s[i++] = l % 10 + '0'; /* get next digit */
+      } while ((l /= 10) > 0);
+      if (sign < 0)
+          s[i++] = '-';
+      s[i] = '\0';
+      reverse(s);
+  }
+
+  /* 
+     better solution
+     from: https://clc-wiki.net/wiki/K%26R2_solutions:Chapter_3:Exercise_4
+  ,*/
+  void itoa2(int n, char s[]) {
+      int i, sign;
+      sign = n;
+
+      i = 0;
+      do {
+          s[i++] = abs(n % 10) + '0'; // first change from original
+      } while ( n /= 10 ); // second change from original
+      if (sign < 0)
+          s[i++] = '-';
+
+      s[i] = '\0';
+      reverse(s);
+  }
+
+  /* reverse: reverse string s in place */
+  void reverse(char s[])
+  {
+      int c, i, j;
+
+      for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
+          c = s[i];
+          s[i] = s[j];
+          s[j] = c;
+      }
+  }
+#+end_src
+
+** 3-5
+Write the function itob(n,s,b) that converts the integers n into a
+base b character representation in the string s. In particular,
+itob(n,s,16) formats n as a hexadecimal integer in s.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <ctype.h>
+
+  void itob(int n, char s[], int b);
+  void reverse(char s[]);
+
+  int main(void)
+  {
+      char s[100];
+
+      itob(1234512, s, 16);
+
+      printf("%s\n", s);
+
+      return 0;
+  }
+
+  void itob(int n, char s[], int b)
+  {
+      if ( b < 2 || b > 36 ) {
+          printf("Incorrect usage. 2 <= base <= 36");
+          return;
+      }
+
+      int i, sign;
+      sign = n;
+      int to_skip = 'A' - '9'; // number of chars between '9' and 'A'
+
+      i = 0;
+      do {
+          s[i++] = isdigit(abs(n % b) + '0') ?
+              abs(n % b) + '0' : abs(n % b) + '0' + to_skip;
+      } while ( n /= b );
+      if (sign < 0)
+          s[i++] = '-';
+    
+      s[i] = '\0';
+      reverse(s);
+  }
+
+  /* reverse: reverse string s in place */
+  void reverse(char s[])
+  {
+      int c, i, j;
+
+      for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
+          c = s[i];
+          s[i] = s[j];
+          s[j] = c;
+      }
+  }
+#+end_src
+
+** 3-6
+Write a version of itoa that accepts three arguments instead of
+two. The third argument is a minimum field width; the converted number
+must be padded with blanks on the left if necessary to make it wide
+enough.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <string.h>
+  #include <stdlib.h>
+
+  void reverse(char s[]);
+  void itoa(int n, char s[], int l);
+
+  int main(void)
+  {
+      int n = -2147483648;
+      char word[100];
+
+      itoa(n, word, 15);
+      printf("%s\n", word);
+
+      return 0;
+  }
+
+  void itoa(int n, char s[], int l) {
+      int i, sign;
+      sign = n;
+
+      i = 0;
+      do {
+          s[i++] = abs(n % 10) + '0';
+      } while ( n /= 10 );
+      if (sign < 0)
+          s[i++] = '-';
+
+      if (i < l)
+          while (i < l)
+              s[i++] = ' ';
+
+      s[i] = '\0';
+
+      reverse(s);
+  }
+
+  /* reverse: reverse string s in place */
+  void reverse(char s[])
+  {
+      int c, i, j;
+
+      for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
+          c = s[i];
+          s[i] = s[j];
+          s[j] = c;
+      }
+  }
+#+end_src
+
+* Chapter 4: Functions and Program Structure
+** 4-1
+Write the function strrindex(s,t), which returns the position of the
+rightmost occurrence of t in s, or -1 if there is none.
+
+#+begin_src C
+  #include <stdio.h>
+
+  int strrindex(char s[], char t[]);
+
+  main()
+  {
+      char s1[100] = "Hello world world";
+      char s2[100] = "world";
+      printf("%i\n", strrindex(s1, s2));
+      printf("%i\n", strindex(s1, s2));
+  }
+
+  int strrindex(char s[], char t[])
+  {
+      int i, j, k;
+
+      for (i = 0; s[i] != '\0'; i++)
+          ;
+
+      for (i = i-2; s[i] >= 0; i--) {
+          for (j=i, k=0; t[k]!='\0' && s[j]==t[k]; j++, k++)
+              ;
+          if (k > 0 && t[k] == '\0')
+              return i;
+      }
+      return -1;
+  }
+#+end_src
+
+** 4-13
+Write a recursive version of the function reverse(s), which reverses
+the string s in place.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <string.h>
+
+  void reverse(char s[], int i);
+
+  main()
+  {
+      char s[] = "Hello world";
+      reverse(s, 0);
+      printf("%s\n", s);
+      return 0;
+  }
+
+  /* Reverse string in place. Start reversing at index i */
+  void reverse(char s[], int i)
+  {
+      int len = strlen(s);
+      if (i < len/2) {
+          int c;
+          c = s[i];
+          s[i] = s[len-1-i];
+          s[len-1-i] = c;
+          reverse(s, ++i);
+      }
+  }
+#+end_src
+
+* Chapter 5: Pointers and Arrays
+** 5-3
+Write a pointer version of the function strcat that we showed in
+Chapter 2: strcat(s,t) copies the string s to the end of s.
+
+#+begin_src C
+  #include <stdio.h>
+
+  void strcat2(char *s, char *t);
+
+  int main(void)
+  {
+      char s1[100] = {'H', 'e', 'l', 'l', 'o', '\0'};
+      char s2[] = ", world";
+
+      strcat2(s1, s2);
+
+      printf("%s\n", s1);
+
+      return 0;
+  }
+
+  /* strcat2: concatenate t to end of s; s must be big enough */
+  void strcat2(char *s, char *t)
+  {
+      while (*s) /* find end of s */
+          s++;
+      while (*s++ = *t++) /* copy t */
+          ;
+  }
+#+end_src
+
+** 5-6
+Rewrite appropriate programs from earlier chapters and exercises with
+pointers instead of array indexing...
+
+#+begin_src C
+  #include <stdio.h>
+
+  /* getline, p.29 */
+  int getline2(char *s, int lim)
+  {
+      int c, i;
+
+      for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+          ,*(s+i) = c;
+      if (c == '\n') {
+          ,*(s+i) = c;
+          ++i;
+      }
+      ,*(s+i) = '\0';
+      return i;
+  }
+
+  /* atoi, p. 43 */
+  int atoi2(char *s) {
+      int i, n;
+
+      n = 0;
+      for (i = 0; *(s+i)  >= '0' && *(s+i) <= '9'; ++i)
+          n = 10 * n + (*(s+i) - '0');
+
+      return n;
+  }
+
+  /* itoa, p. 64 */
+  void itoa2(int n, char *s) {
+      int i, sign;
+
+      if ((sign = n) < 0)
+          n = -n;
+      i = 0;
+      do {
+          ,*(s+(i++)) = n % 10 + '0';
+      } while ((n /= 10) > 0);
+      if (sign < 0)
+          ,*(s+(i++)) = '-';
+      ,*(s+i) = '\0';
+      reverse(s);
+  }
+
+  /* reverse, p. 62 */
+  void reverse2(char *s) {
+      int c, i, j;
+
+      for (i = 0, j = strlen(s)-1; i < j; i++, j--) {
+          c = *(s+i);
+          ,*(s+i) = *(s+j);
+          ,*(s+j) = c;
+      }
+  }
+
+  /* strindex, p. 69  */
+  int strindex2(char *s, char *t) {
+      int i, j, k;
+
+      for (i = 0; *(s+i) != '\0'; i++) {
+          for (j=i, k=0; *(t+k)!='\0' && *(s+j)==*(t+k); j++, k++)
+              ;
+          if (k > 0 && *(t+k) == '\0')
+              return i;
+      }
+
+      return -1;
+  }
+
+  /*getop, p. 78*/
+  int getop2(char *s) {
+      int i, c;
+
+      while ((*s = c = getch()) == ' ' || c == '\t')
+          ;
+      ,*(s+1) = '\0';
+      if (!isdigit(c) && c != '.')
+          return c;
+      i = 0;
+      if (isdigit(c))
+          while (isdigit(*(s+(++i)) = c = getch()))
+              ;
+      if (c == '.')
+          while (isdigit(*(s+(++i)) = c = getch()))
+              ;
+      ,*(s+i) = '\0';
+      if (c != EOF)
+          ungetch(c);
+      return NUMBER;
+  }
+#+end_src
+
+* Chapter 7: Input and Output
+** 7-1
+Write a program that converts upper case to lower or lower case to
+upper, depending on the name it is invoked with, as found in argv[0].
+
+#+begin_src C
+  #include <stdio.h>
+  #include <ctype.h>
+
+  char *getname(char *input);
+  int my_strcmp(char *s1, char *s2);
+
+  int main(int argc, char *argv[])
+  {
+      int c;
+      char *name = getname(argv[0]);
+
+      if (my_strcmp("uppertolower", name) == 0)
+          while ((c = getchar()) != EOF)
+              putchar(tolower(c));
+      else if (my_strcmp("lowertoupper", name) == 0)
+          while ((c = getchar()) != EOF)
+              putchar(toupper(c));
+      else
+          printf("Name not recognized...\n");
+	    
+      return 0;
+  }
+
+  /* Return part of input between last forward slash and end. Return
+     input if no forward slash is present */
+  char *getname(char *input)
+  {
+      int i = 0;
+      int fslash_index = -1; // store index of last forward slash we find
+
+      while (input[i] != '\0') {
+          if (input[i] == '/')
+              fslash_index = i;
+          i++;
+      }
+
+      if (fslash_index == -1) {
+          return input;
+      } else {
+          char *pt = input + fslash_index;
+          return pt+1;
+      }
+  }
+
+  // The function assumes that there is a null character at the end of
+  // s1, and that s1 and s2 have the same length...
+  int my_strcmp(char *s1, char *s2)
+  {
+      int i = 0;
+      while (s1[i] != '\0') {
+          if (s1[i] != s2[i])
+              return -1;
+          i++;
+      }
+      return 0;
+  }
+#+end_src
+
+** 7-2
+Write a program that will print arbitrary input in a sensible way. As
+a minimum, it should print non-graphic characters in octal or
+hexadecimal according to local custom, and break long text lines.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <ctype.h>
+
+  #define MAXLINE 70
+
+  int main(void) {
+      int c, i = 0;
+      while ((c = getchar()) != EOF) {
+          if (isprint(c))
+              printf("%c", c);
+          else
+              printf("[0x%x]", c);
+
+          i++;
+          if (i == MAXLINE) {
+              i = 0;
+              putchar('\n');
+          }
+      }
+
+      putchar('\n');
+
+      return 0;
+  }
+#+end_src
+
+** 7-3
+Revise ~minprintf~ to handle more of the other facilities of
+~printfs~.
+
+#+begin_src C
+  #include <stdarg.h>
+
+  /* minprintf: minimal printf with variable argument list */
+
+  void minprintf(char *fmt, ...)
+  {
+      va_list ap; /* points to each unnamee arg in turn */
+      char *p, *sval;
+      int ival;
+      double dval;
+      unsigned uval;
+
+      va_start(ap, fmt); /* make ap point to 1st unnamed arg */
+      for (p = fmt; *p; p++) {
+          if (*p != '%') {
+              putchar(*p);
+              continue;
+          }
+          switch (*++p) {
+          case 'd':
+              ival = va_arg(ap, int);
+              printf("%d", ival);
+              break;
+          case 'c':
+              ival = va_arg(ap, int);
+              printf("%c", ival);
+              break;
+          case 'f':
+              dval = va_arg(ap, double);
+              printf("%f", dval);
+              break;
+          case 'e':
+              dval = va_arg(ap, double);
+              printf("%e", dval);
+              break;
+          case 'a':
+              dval = va_arg(ap, double);
+              printf("%a", dval);
+              break;
+          case 'g':
+              dval = va_arg(ap, double);
+              printf("%g", dval);
+              break;
+          case 'u':
+              uval = va_arg(ap, unsigned int);
+              printf("%u", uval);
+              break;
+          case 'o':
+              uval = va_arg(ap, unsigned int);
+              printf("%o", ival);
+              break;
+          case 'x':
+              uval = va_arg(ap, unsigned int);
+              printf("%x", ival);
+              break;
+          case 's':
+              for (sval = va_arg(ap, char *); *sval; sval++)
+                  putchar(*sval);
+              break;
+          default:
+              putchar(*p);
+              break;
+          }
+      }
+      va_end(ap); /* clean up when done */
+  }
+#+end_src
+
+** 7-4
+Write a private version of scanf analogous to minprintf from the
+previous section.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <stdarg.h>
+
+  void minscanf(char *fmt, ...);
+
+  int main(void)
+  {
+      int i, c;
+      float f;
+      char s[100];
+
+      minscanf("%d %f %s", &i, &f, s);
+      printf("%d %.2f %s\n", i, f, s);
+
+      return 0;
+  }
+
+  void minscanf(char *fmt, ...)
+  {
+      va_list ap;
+      char *p;
+
+      va_start(ap, fmt);
+      for (p = fmt; *p; p++) {
+          if (*p != '%') {
+              if (*p == ' ' || *p == '\t')
+                  continue;
+          }
+          switch (*++p) {
+          case 'd':
+              scanf("%d", va_arg(ap, int *) );
+              break;
+          case 'c':
+              scanf("%c", va_arg(ap, int *));
+              break;
+          case 'f':
+              scanf("%f", va_arg(ap, float *));
+              break;
+          case 's':
+              scanf("%s", va_arg(ap, char *));
+              break;
+          default:
+              break;
+          }
+      }
+      va_end(ap);
+  }
+#+end_src
+    
+** 7-6
+Write a program to compare two files, printing the first line where
+they differ.
+
+#+begin_src C
+  #include <stdio.h>
+
+  #define MAXLINE 1000
+
+  int strcmp(char *s, char *t);
+
+  int main(int argc, char *argv[])
+  {
+      char s1[1000], s2[1000];
+      FILE *fp1, *fp2;
+
+      fp1 = fopen(argv[1], "r");
+      fp2 = fopen(argv[2], "r");
+    
+      int line_n = 0;
+      while (fgets(s1, MAXLINE, fp1)) {
+          fgets(s2, MAXLINE, fp2);
+          line_n++;
+          if (strcmp(s1, s2) != 0) {
+              printf("At line %d:\n", line_n);
+              printf("%s: %s", argv[1], s1);
+              printf("%s: %s", argv[2], s2);
+              break;
+          }
+      }
+
+      fclose(fp1);
+      fclose(fp2);
+
+      return 0;
+  }
+
+  int strcmp(char *s, char *t)
+  {
+      int i;
+
+      for (i = 0; s[i] == t[i]; i++)
+          if (s[i] == '\0')
+              return 0;
+      return s[i] - t[i];
+  }
+#+end_src
+
+** 7-8
+Write a program to print a set of files, starting each new one on a
+new page, with a title and a running page count for each file.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  void print_file(char *);
+  void filecopy(FILE * ifp, FILE *ofp);
+  void print_page_footer(int page);
+  void print_page_header(char *title, int page);
+
+  int main(int argc, char *argv[]) {
+    
+      FILE *fp;
+      char *prog = argv[0];
+      int page = 0;
+
+      if (argc == 1)
+          printf("No arguments given...");
+      else
+          while (--argc > 0)
+              if ((fp = fopen(*++argv, "r")) == NULL) {
+                  fprintf(stderr, "%s: can't open %s\n", prog, *argv);
+                  exit(1);
+              } else {
+                  page++;
+                  print_page_header(*argv, page);
+                  filecopy(fp, stdout);
+                  print_page_footer(page);
+                  fclose(fp);
+              }
+      if (ferror(stdout)) {
+          fprintf(stderr, "%s: error writing stdout\n", prog);
+          exit(2);
+      }
+
+      return 0;
+  }
+
+  void print_file(char * filename) {
+      FILE *fp = fopen(filename, "r");
+    
+      int c;
+
+      while ((c = getc(fp) != EOF))
+          putc(c, stdout);
+    
+      fclose(fp);
+  }
+
+  void filecopy(FILE *ifp, FILE *ofp) {
+      int c;
+
+      while ((c = getc(ifp)) != EOF)
+          putc(c, ofp);
+  }
+
+  void print_page_header(char *title, int page) {
+      printf("####################\tp. %d\t\t####################\n", page); 
+      printf("####################\t%s\t\t####################\n", title);
+  }
+
+  void print_page_footer(int page) {
+      printf("####################\tEnd of p. %d\t####################", page);
+      printf("\n\n");
+  }
+#+end_src
+
+** 7-9
+Functions like isupper can be implemented to save space or to save
+time. Explore both possibilities.
+
+#+begin_src C
+int isupper_save_space(char c) {
+    if (c >= 'A' && c <= 'Z')
+	return 1;
+    else
+	return 0;
+}
+
+#define isupper_save_time(c) ((c) >= 'A' && (c) <= 'Z') ? 1 : 0
+#+end_src
+
+* Chapter 8: The UNIX System Interface
+** 8-1
+Rewrite the program cat from Chapter 7 using read, write, open and
+close instead of their standard library equivalents. Perform
+experiments to determine the relative speeds of the two versions.
+
+#+begin_src C
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+
+  #undef BUFSIZ
+  #define BUFSIZ 1 // make things slower...
+
+  void copy(int ifd, int ofd);
+
+  int main(int argc, char *argv[]) {
+      int fd;
+      char *prog = argv[0]; /* program name for errors */
+
+      if (argc == 1 ) /* no args; copy standard input */
+          copy(0, 1);
+      else
+          while (--argc > 0)
+              if ((fd = open(*++argv, O_RDONLY, 0)) == -1) {
+                  fprintf(stderr, "%s: can't open %s\n",
+                          prog, *argv);
+                  exit(1);
+              } else
+                  copy(fd, 1);
+      exit(0);
+  }
+
+  /* copy: copy ifd to ofd */
+  void copy(int ifd, int ofd)
+  {
+      char buf[BUFSIZ];
+      int n;
+
+      while ( (n = read(ifd, buf, BUFSIZ)) > 0)
+          write(ofd, buf, n);
+  }
+#+end_src
+
+** 8-2
+Rewrite fopen and _fillbuf with fields instead of explicit bit
+operations. Compare code size and execution speed.
+
+#+begin_src C
+  #include <fcntl.h>
+  #include <unistd.h>
+  #include <stdlib.h>
+
+  // #define NULL     0
+  #define EOF      (-1)
+  #define BUFSIZ  1024
+  #define OPEN_MAX 20  /* max #files open at once */
+
+  struct flags {
+      unsigned int read  :1;
+      unsigned int write :1;
+      unsigned int unbuf :1;
+      unsigned int eof   :1;
+      unsigned int err   :1;
+  };
+
+  typedef struct _iobuf {
+      int  cnt;   /* characters left */
+      char *ptr;  /* next character position */
+      char *base; /* location of the buffer */
+      struct flags flag;   /* mode of file access */
+      int fd;     /* file descriptor */
+  } FILE;
+
+  //extern FILE _iob[OPEN_MAX];
+  FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
+      { 0, (char *) 0, (char *) 0, {1,0,0,0,0}, 0 },
+      { 0, (char *) 0, (char *) 0, {0,1,0,0,0}, 1 },
+      { 0, (char *) 0, (char *) 0, {0,1,1,0,0}, 2 }
+  };
+
+  #define stdin    (&_iob[0])
+  #define stdout   (&_iob[1])
+  #define stderr   (&_iob[2])
+
+  int _fillbuf(FILE *);
+  int _fllushbuf(int , FILE *);
+
+  #define feof(p)    (((p)->flag.eof == 1))
+  #define ferror(p)  (((p)->flag.err == 1))
+  #define fileno(p)  ((p)->fd)
+
+  #define getc(p)    (--(p)->cnt >= 0					\
+                      ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
+  #define putc(x, p) (--(p)->cnt >= 0		\
+                      ? *(p)->ptr++ = (x) : _flushbuf((x),p))
+
+  #define getchar()  getc(stdin)
+  #define putchar()  putc((x), stdout)
+
+
+  #define PERMS 0666 /* RW for owner, group, others */
+
+  FILE *fopen(char *name, char *mode);
+
+  int main(void)
+  {
+      for (int i = 3; i < OPEN_MAX; i++) {
+          FILE f;
+          f.cnt = 0;
+          f.ptr = (char *) 0;
+          f.base = (char *) 0;
+          f.flag.eof = 0;
+          f.flag.err = 0;
+          f.flag.read = 0;
+          f.flag.unbuf = 0;
+          f.flag.write = 0;
+          f.fd = -1;
+          _iob[i] = f;
+      }
+
+      FILE *fp1, *fp2;
+
+      char buf[10000];
+
+      fp1 = fopen("./cat.c", "r");
+
+      int c;
+
+      while ((c = getc(fp1)) != EOF)
+          write(1, &c, 1);
+    
+      fp2 = fopen("./hello-world.txt", "w");
+	
+      return 0;
+  }
+
+  /* fopen: open file, return file ptr */
+  FILE *fopen(char *name, char *mode)
+  {
+      int fd;
+      FILE *fp;
+
+      if (*mode != 'r' && *mode != 'w' && *mode != 'a')
+          return NULL;
+      for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
+          if (fp->flag.read == 0 && fp->flag.write == 0)
+              break; /* found free slot */
+
+      if (fp >= _iob + OPEN_MAX) /* no free slots */
+          return NULL;
+    
+      if (*mode == 'w')
+          fd = creat(name, PERMS);
+      else if (*mode == 'a') {
+          if ((fd = open(name, O_WRONLY, 0)) == -1) // this opens for
+                                                    // writing a file
+                                                    // that already
+                                                    // exists
+              fd = creat(name, PERMS); // this opens for writing a file
+                                       // that does not already exist
+          lseek(fd, 0L, 2);
+      } else
+          fd = open(name, O_RDONLY, 0);
+      if (fd == -1) // couldn't access name
+          return NULL;
+      fp->fd = fd;
+      fp->cnt = 0;
+      fp->base = NULL;
+
+      if (*mode == 'r') fp->flag.read = 1;
+      else fp->flag.write = 1;
+        
+      return fp;
+  }
+
+  /* _fillbuf: allocate and fill input buffer */
+  int _fillbuf(FILE *fp)
+  {
+      int bufsize;
+      if (fp->flag.read==0 || fp->flag.eof==1 || fp->flag.err==1)
+          return EOF;
+      bufsize = (fp->flag.unbuf) ? 1 : BUFSIZ;
+      if (fp->base == NULL) /* no buffer yet */
+          if ((fp->base = (char *) malloc(bufsize)) == NULL)
+              return EOF; /* can't get buffer */
+      fp->ptr = fp->base;
+      fp->cnt = read(fp->fd, fp->ptr, bufsize);
+      if (--fp->cnt < 0) {
+          if (fp->cnt == -1)
+              fp->flag.eof = 1;
+          else
+              fp->flag.err = 1;
+          fp->cnt = 0;
+          return EOF;
+      }
+      return (unsigned char) *fp->ptr++;
+  }
+#+end_src
+
+** 8-3
+Design and write _flushbuf, fflush, and fclose.
+
+#+begin_src C
+  #include <fcntl.h>
+  #include <unistd.h>
+  #include <stdlib.h>
+
+  // #define NULL     0
+  #define EOF      (-1)
+  #define BUFSIZ  1024
+  #define OPEN_MAX 20  /* max #files open at once */
+
+  typedef struct _iobuf {
+      int  cnt;   /* characters left */
+      char *ptr;  /* next character position */
+      char *base; /* location of the buffer */
+      int flag;   /* mode of file access */
+      int fd;     /* file descriptor */
+  } FILE;
+
+  enum _flags {
+      _READ    = 01,    /* file open for reading */
+      _WRITE   = 02,    /* file open for writing */
+      _UNBUF   = 04,    /* file is ubuffered */
+      _EOF     = 010,   /* EOF has occurred on this file */
+      _ERR     = 020    /* error occurred on this file */
+  };
+
+  //extern FILE _iob[OPEN_MAX];
+  FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
+      { 0, (char *) 0, (char *) 0, _READ, 0 },
+      { 0, (char *) 0, (char *) 0, _WRITE, 1 },
+      { 0, (char *) 0, (char *) 0, _WRITE | _UNBUF, 2 }
+  };
+
+  #define stdin    (&_iob[0])
+  #define stdout   (&_iob[1])
+  #define stderr   (&_iob[2])
+
+  int _fillbuf(FILE *);
+  int _flushbuf(int , FILE *);
+  int fflush(FILE *);
+  static int fflush_flush(FILE *fp);
+  int fclose(FILE *fp);
+
+  #define feof(p)    (((p)->flag & _EOF) != 0)
+  #define ferror(p)  (((p)->flag & _ERR) != 0)
+  #define fileno(p)  ((p)->fd)
+
+  #define getc(p)    (--(p)->cnt >= 0					\
+                      ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
+  #define putc(x, p) (--(p)->cnt >= 0				\
+                      ? *(p)->ptr++ = (x) : _flushbuf((x),p))
+
+  #define getchar()  getc(stdin)
+  #define putchar()  putc((x), stdout)
+
+
+  #define PERMS 0666 /* RW for owner, group, others */
+
+  FILE *fopen(char *name, char *mode);
+
+  int main(void)
+  {
+      FILE *fp1, *fp2;
+
+      fp1 = fopen("./cat.c", "r");
+
+      int c;
+
+      while ((c = getc(fp1)) != EOF)
+          write(1, &c, 1);
+
+      fp2 = fopen("./hello-world.txt", "w");
+
+      char *s = "hello world!";
+      for (int i = 0; s[i] != '\0'; i++) {
+          putc(s[i], fp2);
+      }
+
+      //fflush(fp2);
+      //fflush(NULL);
+
+      fclose(fp2);
+
+      return 0;
+  }
+
+  /* fopen: open file, return file ptr */
+  FILE *fopen(char *name, char *mode)
+  {
+      int fd;
+      FILE *fp;
+
+      if (*mode != 'r' && *mode != 'w' && *mode != 'a')
+          return NULL;
+      for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
+          if ((fp->flag & (_READ | _WRITE)) == 0)
+              break; /* found free slot */
+      /* atm only the first FILEs in the _iob array have been
+       ,* initialized. Isn't it problem that fp points to garbage? */
+
+      if (fp >= _iob + OPEN_MAX) /* no free slots */
+          return NULL;
+      /* Why do we need to test for greater than? Wouldn't fp == _iob +
+       ,* OPEN_MAX suffice? How could fp point beyond _iob+OPEN_MAX? */
+
+      if (*mode == 'w')
+          fd = creat(name, PERMS);
+      else if (*mode == 'a') {
+          if ((fd = open(name, O_WRONLY, 0)) == -1) // this opens for
+                                                    // writing a file
+                                                    // that already
+                                                    // exists
+              fd = creat(name, PERMS); // this opens for writing a file
+                                       // that does not already exist
+          lseek(fd, 0L, 2);
+      } else
+          fd = open(name, O_RDONLY, 0);
+      if (fd == -1) // couldn't access name
+          return NULL;
+      fp->fd = fd;
+      fp->cnt = 0;
+      fp->base = NULL;
+      fp->flag = (*mode == 'r') ? _READ : _WRITE;
+
+      return fp;
+  }
+
+  /* _fillbuf: allocate and fill input buffer */
+  int _fillbuf(FILE *fp)
+  {
+      int bufsize;
+      if ((fp->flag&(_READ|_EOF|_ERR)) != _READ)
+          return EOF;
+      bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+      if (fp->base == NULL) /* no buffer yet */
+          if ((fp->base = (char *) malloc(bufsize)) == NULL)
+              return EOF; /* can't get buffer */
+      fp->ptr = fp->base;
+      fp->cnt = read(fp->fd, fp->ptr, bufsize);
+      if (--fp->cnt < 0) {
+          if (fp->cnt == -1)
+              fp->flag |= _EOF;
+          else
+              fp->flag |= _ERR;
+          fp->cnt = 0;
+          return EOF;
+      }
+      return (unsigned char) *fp->ptr++;
+  }
+
+  /* _flushbuf: flush buffer or allocate one if not allocated yet */
+  int _flushbuf(int x, FILE *fp)
+  {
+      // _flushbuf is called only when no charater has been written into
+      // the output file yet, or when we need to flush because the base
+      // buffer is full. In both cases, fp->cnt is supposed to be -1.
+      int bufsize;
+      if ((fp->flag&(_WRITE|_ERR) != _WRITE))
+          return EOF;
+      bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+
+      if (fp->base == NULL)
+          if ((fp->base = (char *) malloc(bufsize)) == NULL)
+              return EOF;
+
+      if (fp->ptr == fp->base + bufsize)
+          write(fp->fd, fp->base, bufsize);
+
+      fp->cnt = bufsize;
+      fp->ptr = fp->base;
+
+      if (--fp->cnt < 0) {
+          fp->flag |= _ERR;
+          fp->cnt = 0; //perhaps unnecessary.. but it doesn't hurt
+          return EOF;
+      }
+
+      return (unsigned char) (*fp->ptr++ = x);
+  }
+
+  /* Write any buffered data for fp. Return EOF for a write error, 0
+   ,* otherwise. fflush(NULL) flushes all output streams. */
+  int fflush(FILE *fp)
+  {
+      if (fp == NULL) {
+          // Loop over FILE structs in _iob, skipping stdin, stdout and
+          // stderr
+          for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
+              if ((fp->flag & (_WRITE|_ERR)) != _WRITE)
+                  if (fflush_flush(fp)==EOF)
+                      return EOF;
+      } else
+          return fflush_flush(fp);
+    
+      return 0;
+  }
+
+  static int fflush_flush(FILE *fp) {
+      int bytestowrite = BUFSIZ - fp->cnt;
+      if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
+          return EOF;
+  }
+
+
+  /* fclose: flush unwritten data, discard unread buffered input, free
+   ,* any automatically allocated buffer, and close the stream. Return
+   ,* EOF if error, zero otherwise. */
+  int fclose(FILE *fp)
+  {
+      if (fp->flag & _WRITE)
+          if (fflush(fp) == EOF) {
+              fp->flag |= _ERR;
+              return EOF;
+          }
+
+      free(fp->base);
+
+      return close(fp->fd) == -1 ? EOF : 0;
+  }
+#+end_src
+
+** 8-4
+The standard library function int fseek(FILE *fp, long offset, int
+origin) is identical to lseek except that fp is a file pointer instead
+of a file descriptor and return value is an int status, not a
+position. Write fseek. Make sure that your fseek coordinates properly
+with the buffering done for the other functions of the library.
+
+#+begin_src C
+  #include <fcntl.h>
+  #include <unistd.h>
+  #include <stdlib.h>
+  #include <string.h>
+
+  // #define NULL     0
+  #define EOF      (-1)
+  #define BUFSIZ  4 //1024
+  #define OPEN_MAX 20  /* max #files open at once */
+
+  typedef struct _iobuf {
+      int  cnt;   /* characters left */
+      char *ptr;  /* next character position */
+      char *base; /* location of the buffer */
+      int flag;   /* mode of file access */
+      int fd;     /* file descriptor */
+  } FILE;
+
+  enum _flags {
+      _READ    = 01,    /* file open for reading */
+      _WRITE   = 02,    /* file open for writing */
+      _UNBUF   = 04,    /* file is ubuffered */
+      _EOF     = 010,   /* EOF has occurred on this file */
+      _ERR     = 020    /* error occurred on this file */
+  };
+
+  //extern FILE _iob[OPEN_MAX];
+  FILE _iob[OPEN_MAX] = { /* stdin, stdout, stderr */
+      { 0, (char *) 0, (char *) 0, _READ, 0 },
+      { 0, (char *) 0, (char *) 0, _WRITE, 1 },
+      { 0, (char *) 0, (char *) 0, _WRITE | _UNBUF, 2 }
+  };
+
+  #define stdin    (&_iob[0])
+  #define stdout   (&_iob[1])
+  #define stderr   (&_iob[2])
+
+  int _fillbuf(FILE *);
+  int _flushbuf(int , FILE *);
+  int fflush(FILE *);
+  static int fflush_flush(FILE *fp);
+  int fclose(FILE *fp);
+  int gp_fseek(FILE *fp, long offset, int origin);
+
+  #define feof(p)    (((p)->flag & _EOF) != 0)
+  #define ferror(p)  (((p)->flag & _ERR) != 0)
+  #define fileno(p)  ((p)->fd)
+
+  #define getc(p)    (--(p)->cnt >= 0					\
+                      ? (unsigned char) *(p)->ptr++ : _fillbuf(p))
+  #define putc(x, p) (--(p)->cnt >= 0				\
+                      ? *(p)->ptr++ = (x) : _flushbuf((x),p))
+
+  #define getchar()  getc(stdin)
+  #define putchar(x)  putc((x), stdout)
+
+
+  #define PERMS 0666 /* RW for owner, group, others */
+
+  FILE *fopen(char *name, char *mode);
+
+  int main(void)
+  {
+      /* FILE *fp1; */
+      FILE *fp2;
+
+      /* fp1 = fopen("./cat.c", "r"); */
+
+      /* int c; */
+
+      /* while ((c = getc(fp1)) != EOF) */
+      /* 	write(1, &c, 1); */
+
+      fp2 = fopen("./hello-world.txt", "w");
+
+      char *s = "hello world!";
+      for (int i = 0; s[i] != '\0'; i++) {
+          putc(s[i], fp2);
+      }
+
+      fflush(fp2);
+
+      gp_fseek(fp2, 0L, 0);
+
+      putc('!', fp2);
+
+      fflush(fp2);
+
+      //fflush(NULL);
+
+      //fclose(fp1);
+      //fclose(fp2);
+
+      return 0;
+  }
+
+  /* fopen: open file, return file ptr */
+  FILE *fopen(char *name, char *mode)
+  {
+      int fd;
+      FILE *fp;
+
+      if (*mode != 'r' && *mode != 'w' && *mode != 'a')
+          return NULL;
+      for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
+          if ((fp->flag & (_READ | _WRITE)) == 0)
+              break; /* found free slot */
+      /* atm only the first FILEs in the _iob array have been
+       ,* initialized. Isn't it problem that fp points to garbage? */
+      /* Answer: everything is automatically set to 0*/
+
+      if (fp >= _iob + OPEN_MAX) /* no free slots */
+          return NULL;
+      /* Why do we need to test for greater than? Wouldn't fp == _iob +
+       ,* OPEN_MAX suffice? How could fp point beyond _iob+OPEN_MAX? */
+      /* Answer: ``defensive programming''... */
+
+      if (*mode == 'w')
+          fd = creat(name, PERMS);
+      else if (*mode == 'a') {
+          if ((fd = open(name, O_WRONLY, 0)) == -1) // this opens for
+                                                    // writing a file
+                                                    // that already
+                                                    // exists
+              fd = creat(name, PERMS); // this opens for writing a file
+                                       // that does not already exist
+          lseek(fd, 0L, 2);
+      } else
+          fd = open(name, O_RDONLY, 0);
+      if (fd == -1) // couldn't access name
+          return NULL;
+      fp->fd = fd;
+      fp->cnt = 0;
+      fp->base = NULL;
+      fp->flag = (*mode == 'r') ? _READ : _WRITE;
+
+      return fp;
+  }
+
+  /* _fillbuf: allocate and fill input buffer */
+  int _fillbuf(FILE *fp)
+  {
+      int bufsize;
+      if ((fp->flag&(_READ|_EOF|_ERR)) != _READ)
+          return EOF;
+      bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+      if (fp->base == NULL) /* no buffer yet */
+          if ((fp->base = (char *) malloc(bufsize)) == NULL)
+              return EOF; /* can't get buffer */
+      fp->ptr = fp->base;
+      fp->cnt = read(fp->fd, fp->ptr, bufsize);
+      if (--fp->cnt < 0) {
+          if (fp->cnt == -1)
+              fp->flag |= _EOF;
+          else
+              fp->flag |= _ERR;
+          fp->cnt = 0;
+          return EOF;
+      }
+      return (unsigned char) *fp->ptr++;
+  }
+
+  /* _flushbuf: flush buffer or allocate one if not allocated yet */
+  int _flushbuf(int x, FILE *fp)
+  {
+      // _flushbuf is called only when no charater has been written into
+      // the output file yet, or when we need to flush because the base
+      // buffer is full. In both cases, fp->cnt is supposed to be -1.
+      int bufsize;
+      if ((fp->flag&(_WRITE|_ERR) != _WRITE))
+          return EOF;
+      bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+
+      if (fp->base == NULL)
+          if ((fp->base = (char *) malloc(bufsize)) == NULL)
+              return EOF;
+
+      if (fp->ptr == fp->base + bufsize)
+          write(fp->fd, fp->base, bufsize);
+
+      fp->cnt = bufsize;
+      fp->ptr = fp->base;
+
+      if (--fp->cnt < 0) {
+          fp->flag |= _ERR;
+          fp->cnt = 0; //perhaps unnecessary.. but it doesn't hurt
+          return EOF;
+      }
+
+      return (unsigned char) (*fp->ptr++ = x);
+  }
+
+  /* Write any buffered data for fp. Return EOF for a write error, 0
+   ,* otherwise. fflush(NULL) flushes all output streams. */
+  int fflush(FILE *fp)
+  {
+      if (fp == NULL) {
+          // Loop over FILE structs in _iob, skipping stdin, stdout and
+          // stderr
+          for (fp = _iob+3; fp < _iob + OPEN_MAX; fp++)
+              if ((fp->flag & (_WRITE|_ERR)) != _WRITE)
+                  if (fflush_flush(fp)==EOF)
+                      return EOF;
+      } else
+          return fflush_flush(fp);
+
+      return 0;
+  }
+
+  static int fflush_flush(FILE *fp) {
+      int bytestowrite = BUFSIZ - fp->cnt;
+      if (write(fp->fd, fp->base, bytestowrite) != bytestowrite)
+          return EOF;
+      fp->cnt = 0;
+      fp->ptr = fp->base;
+  }
+
+  /* fclose: flush unwritten data, discard unread buffered input, free
+   ,* any automatically allocated buffer, and close the stream. Return
+   ,* EOF if error, zero otherwise. */
+  int fclose(FILE *fp)
+  {
+      if (fp->flag & _WRITE)
+          if (fflush(fp) == EOF) {
+              fp->flag |= _ERR;
+              return EOF;
+          }
+
+      free(fp->base);
+
+      return close(fp->fd) == -1 ? EOF : 0;
+  }
+
+  int gp_fseek(FILE *fp, long offset, int origin) {
+      if ((fp->flag&_ERR) || (fp->flag&(_READ|_WRITE) == 0))
+          return -1;
+
+      int bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+      lseek(fp->fd, offset, origin);
+
+      if (fp->flag & _READ) {
+          fp->ptr = fp->base;
+          read(fp->fd, fp->ptr, bufsize);
+          fp->cnt = bufsize;
+      } else if (fp->flag & _WRITE) {
+          fp->cnt = BUFSIZ;    
+          fp->ptr = fp->base;
+      }
+
+      return 0;
+  }
+#+end_src
+
+** 8-6
+The standard library function calloc(n,size) returns a pointer to n
+objects of size size, with the storage initialized to zero. Write
+calloc, by calling malloc or by modifying it.
+
+#+begin_src C
+  #include <stddef.h>
+
+  #define NALLOC 1024 /* minimum #units to request */
+
+  typedef long Align; /* for alignment to long boundary */
+
+  union header {      /* block header: */
+      struct {
+          union header *ptr; /* next block if on free list */
+          unsigned size;     /* size of this block */
+      } s;
+      Align x;        /* force alignment of blocks */
+  };
+
+  typedef union header Header;
+
+  void *krmalloc(unsigned nbytes);
+  static Header *morecore(unsigned nu);
+  void krfree(void *ap);
+  void *gp_calloc(unsigned n, unsigned size);
+
+  int main(void) {
+      void *p;
+    
+      /* p = krmalloc(1000); */
+      p = gp_calloc(10, 100);
+      krfree(p);
+
+      return 0;
+  }
+
+  static Header base;       /* empty list to get started */
+  static Header *freep = NULL; /* start of free list */
+
+  /* krmalloc: general purpose storage allocator */
+  void *krmalloc(unsigned nbytes)
+  {
+      Header *p, *prevp;
+      Header *morecore(unsigned);
+      unsigned nunits;
+
+      nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
+      if ((prevp = freep) == NULL) { /* no free list yet */
+          base.s.ptr = freep = prevp = &base;
+          base.s.size = 0;
+      }
+      for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
+          if (p->s.size >= nunits) { /* big enough */
+              if (p->s.size == nunits) /* exactly */
+                  prevp->s.ptr = p->s.ptr;
+              else {             /* allocate tail end */
+                  p->s.size -= nunits;
+                  p += p->s.size;
+                  p->s.size = nunits;
+              }
+              freep = prevp;
+              return (void *)(p+1);
+          }
+          if (p == freep) /* wrapped around free list */
+              if ((p = morecore(nunits)) == NULL)
+                  return NULL; /* none left */
+      }
+  }
+
+  /* morecore: ask system for more memory */
+  static Header *morecore(unsigned nu)
+  {
+      char *cp, *sbrk(int);
+      Header *up;
+
+      if (nu < NALLOC)
+          nu = NALLOC;
+      cp = sbrk(nu * sizeof(Header));
+      if (cp == (char *) -1) /* no space at all */
+          return NULL;
+      up = (Header *) cp;
+      up->s.size = nu;
+      krfree((void *)(up+1));
+      return freep;
+  }
+
+  /* free: put block ap in free list */
+  void krfree(void *ap) {
+      Header *bp, *p;
+
+      bp = (Header *)ap - 1; /* point to block header */
+      for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
+          if (p >= p->s.ptr && (bp > p || bp < p->s.ptr))
+              break; /* freed block at start or end of arena */
+
+      if (bp + bp->s.size == p->s.ptr) { /* join to upper nbr */
+          bp->s.size += p->s.ptr->s.size;
+          bp->s.ptr = p->s.ptr->s.ptr;
+      } else
+          bp->s.ptr = p->s.ptr;
+      if (p + p->s.size == bp) {         /* join to lower nbr */
+          p->s.size += bp->s.size;
+          p->s.ptr = bp->s.ptr;
+      } else
+          p->s.ptr = bp;
+      freep = p;
+  }
+
+  void *gp_calloc(unsigned n, unsigned size) {
+      char *p;
+      if ((p = krmalloc(n*size)) == NULL)
+          return NULL;
+
+      char *p2 = p;
+      while (p2 < (p + n*size)) {
+          ,*p2 = '\0';
+          p2++;
+      }
+
+      return p;
+  }
+#+end_src
+
+** 8-7
+~malloc~ accepts a size request without checking its plausibility;
+~free~ believes that the block it is asked to free contains a valid
+size field. Improve these routines so they take more pains with error
+checking.
+
+#+begin_src C
+  #include <stddef.h>
+
+  #define NALLOC 1024 /* minimum #units to request */
+
+  typedef long Align; /* for alignment to long boundary */
+
+  union header {      /* block header: */
+      struct {
+          union header *ptr; /* next block if on free list */
+          unsigned size;     /* size of this block */
+      } s;
+      Align x;        /* force alignment of blocks */
+  };
+
+  typedef union header Header;
+
+  void *krmalloc(unsigned nbytes);
+  static Header *morecore(unsigned nu);
+  void krfree(void *ap);
+
+  int main(void) {
+
+      return 0;
+  }
+
+  static Header base;       /* empty list to get started */
+  static Header *freep = NULL; /* start of free list */
+
+  /* krmalloc: general purpose storage allocator */
+  void *krmalloc(unsigned nbytes)
+  {
+      Header *p, *prevp;
+      Header *morecore(unsigned);
+      unsigned nunits;
+
+      nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
+      if ((prevp = freep) == NULL) { /* no free list yet */
+          base.s.ptr = freep = prevp = &base;
+          base.s.size = 0;
+      }
+      for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
+          if (p->s.size >= nunits) { /* big enough */
+              if (p->s.size == nunits) /* exactly */
+                  prevp->s.ptr = p->s.ptr;
+              else {             /* allocate tail end */
+                  p->s.size -= nunits;
+                  p += p->s.size;
+                  p->s.size = nunits;
+              }
+              freep = prevp;
+              return (void *)(p+1);
+          }
+          if (p == freep) /* wrapped around free list */
+              if ((p = morecore(nunits)) == NULL)
+                  return NULL; /* none left */
+      }
+  }
+
+  /* morecore: ask system for more memory */
+  static Header *morecore(unsigned nu)
+  {
+      char *cp, *sbrk(int);
+      Header *up;
+
+      if (nu < NALLOC)
+          nu = NALLOC;
+      cp = sbrk(nu * sizeof(Header));
+      if (cp == (char *) -1) /* no space at all */
+          return NULL;
+      up = (Header *) cp;
+      up->s.size = nu;
+      krfree((void *)(up+1));
+      return freep;
+  }
+
+  /* free: put block ap in free list */
+  void krfree(void *ap) {
+      Header *bp, *p;
+
+      bp = (Header *)ap - 1; /* point to block header */
+      for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
+          if (p >= p->s.ptr && (bp > p || bp < p->s.ptr))
+              break; /* freed block at start or end of arena */
+
+      if (bp + bp->s.size == p->s.ptr) { /* join to upper nbr */
+          bp->s.size += p->s.ptr->s.size;
+          bp->s.ptr = p->s.ptr->s.ptr;
+      } else
+          bp->s.ptr = p->s.ptr;
+      if (p + p->s.size == bp) {         /* join to lower nbr */
+          p->s.size += bp->s.size;
+          p->s.ptr = bp->s.ptr;
+      } else
+          p->s.ptr = bp;
+      freep = p;
+  }
+#+end_src
