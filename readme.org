@@ -1216,9 +1216,9 @@ correctly, regardless of the machine on which it runs.
 
       /*
       Suppose n == -2147483648. This number is the largest negative
-      number we can put in a int (that is, the largest negative number
-      we can represent with 4 bites --- assuming that a int is 4
-      bytes). itoa will do n = -n. But -n is too big to be stored in a
+      number we can put in an int (that is, the largest negative number
+      we can represent with 4 bites --- assuming that an int is 4
+      bytes). itoa will do n = -n. But -n is too big to be stored in an
       int. In fact, if we try to make n positive by negating it, we get
       n itself back (given the way two's complement representation
       works). So n will still be negative. Given so, the condition n /=
